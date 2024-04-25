@@ -56,8 +56,9 @@ class MainWindow(QWidget, main_window) :
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
         date = self.txt_date.text()
 
-        from db.db_select import Select(date)
+        from db.db_select import Select()
         
+
                 
         self.make_table(len(data), data, title)
 
