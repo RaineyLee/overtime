@@ -95,10 +95,8 @@ class Select:
 
         except Exception as e:
             self.msg_box("Error", str(e))
-
-        return result
     
-    def dept_overtime(self, arg_1):
+    def dept_overtime(self, arr_1):
         cursor = self.conn.cursor()
 
         try:
@@ -108,8 +106,14 @@ class Select:
             # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
             # 위와 같이 작성하면 오류가 발생하는 것이다.            
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+            #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
 
-            query = """SELECT dept_name, emp_id, emp_name, overtime_date, s_time, t_time, overtime, deatail, note, c_date, u_date FROM overtime WHERE overtime_date = %s;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            query = """SELECT ifnull(a.dept_name, "생산본부") as "Dept", ifnull(DATE_FORMAT(a.overtime_date, "%%Y-%%m"), "합계") AS "Month", round(SUM(a.overtime),2) AS "OVERTIME"
+                    FROM overtime a, (SELECT c.emp_id, c.emp_name, d.dept_id, d.dept_name FROM employee c, department d WHERE c.dept_id = d.dept_id) b   
+                    WHERE date_format(overtime_date, "%%Y-%%m") BETWEEN %s AND %s
+                    AND a.emp_id = b.emp_id
+                    GROUP BY a.dept_name, a.overtime_date
+                    WITH ROLLUP;""" 
             cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
@@ -125,7 +129,45 @@ class Select:
         except Exception as e:
             self.msg_box("Error", str(e))
 
-        return result
+    def all_overtime(self, arr_1):
+        cursor = self.conn.cursor()
+
+        try:
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+
+            query = """
+                    SELECT *
+                    FROM(                    
+                    SELECT b.dept_id AS "DeptID", b.dept_name AS "DeptNAME", c.emp_id AS "EmpID", c.emp_name AS "Name", 
+                            a.overtime_date AS "Month", round(a.overtime,2) AS "OVERTIME", a.s_time AS "START", a.t_time AS "END", a.detail AS "DETAIL", a.note AS "NOTE"
+                    FROM overtime a, department b, employee c   
+                    WHERE a.emp_id = c.emp_id
+                    AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
+                    ORDER BY  b.dept_id, c.emp_id, a.overtime_date) SUB
+                    WHERE DeptID LIKE %s
+                    ORDER BY EmpID, Month
+                    ;               
+                    """ 
+                                #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            result = cursor.fetchall()
+
+            if result:
+                self.conn.close()
+                self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
+                return result
+            else:
+                self.conn.close()
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
+
+        except Exception as e:
+            self.msg_box("Error", str(e))
 
 
     def msg_box(self, msg_1, msg_2):
