@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>969</width>
-    <height>818</height>
+    <width>626</width>
+    <height>814</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="btn_select_dept">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>10</y>
+     <x>217</x>
+     <y>50</y>
      <width>61</width>
      <height>31</height>
     </rect>
@@ -37,8 +37,8 @@
   <widget class="QPushButton" name="btn_search">
    <property name="geometry">
     <rect>
-     <x>890</x>
-     <y>10</y>
+     <x>550</x>
+     <y>50</y>
      <width>60</width>
      <height>31</height>
     </rect>
@@ -83,15 +83,18 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>50</y>
-     <width>931</width>
-     <height>721</height>
+     <y>90</y>
+     <width>591</width>
+     <height>681</height>
     </rect>
    </property>
    <property name="sizeAdjustPolicy">
     <enum>QAbstractScrollArea::AdjustToContents</enum>
    </property>
    <property name="dragEnabled">
+    <bool>true</bool>
+   </property>
+   <property name="alternatingRowColors">
     <bool>true</bool>
    </property>
    <property name="selectionBehavior">
@@ -119,7 +122,7 @@
   <widget class="QPushButton" name="btn_close">
    <property name="geometry">
     <rect>
-     <x>890</x>
+     <x>550</x>
      <y>780</y>
      <width>61</width>
      <height>31</height>
@@ -146,6 +149,14 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>맑은 고딕</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="dateTime">
     <datetime>
      <hour>0</hour>
@@ -166,8 +177,8 @@
   <widget class="QLabel" name="lbl_select_file_2">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>10</y>
+     <x>20</x>
+     <y>50</y>
      <width>61</width>
      <height>30</height>
     </rect>
@@ -181,27 +192,43 @@
     </font>
    </property>
    <property name="text">
-    <string>부서선택</string>
+    <string>부서명</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="txt_dept_id">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>10</y>
+     <x>64</x>
+     <y>50</y>
      <width>71</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>맑은 고딕</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
   </widget>
   <widget class="QTextEdit" name="txt_dept_name">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>10</y>
+     <x>134</x>
+     <y>50</y>
      <width>81</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>맑은 고딕</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -234,6 +261,14 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>맑은 고딕</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
    <property name="dateTime">
     <datetime>
      <hour>0</hour>
@@ -249,6 +284,114 @@
    </property>
    <property name="calendarPopup">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_select_file_3">
+   <property name="geometry">
+    <rect>
+     <x>287</x>
+     <y>50</y>
+     <width>61</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>8</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>사원명</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="txt_emp_id">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>50</y>
+     <width>71</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>맑은 고딕</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_select_emp">
+   <property name="geometry">
+    <rect>
+     <x>483</x>
+     <y>50</y>
+     <width>61</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>8</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>선택</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="txt_emp_name">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>50</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>맑은 고딕</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="cursorWidth">
+    <number>-2</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_clear">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>780</y>
+     <width>61</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>8</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>초기화</string>
    </property>
   </widget>
  </widget>

@@ -82,7 +82,11 @@ class Select:
             # 위와 같이 작성하면 오류가 발생하는 것이다.            
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
-            query = """SELECT dept_id, dept_name, dept_level, dept_upper FROM department WHERE dept_id = %s ORDER BY dept_id;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            query = """SELECT a.dept_id, a.dept_name, b.emp_id, b.emp_name 
+                        FROM department a, employee b 
+                        WHERE b.dept_id = a.dept_id 
+                        AND a.dept_id = %s
+                        ORDER BY b.emp_id;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
             cursor.execute(query, arg_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
@@ -108,12 +112,49 @@ class Select:
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
             #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
 
-            query = """SELECT ifnull(a.dept_name, "생산본부") as "Dept", ifnull(DATE_FORMAT(a.overtime_date, "%%Y-%%m"), "합계") AS "Month", round(SUM(a.overtime),2) AS "OVERTIME"
-                    FROM overtime a, (SELECT c.emp_id, c.emp_name, d.dept_id, d.dept_name FROM employee c, department d WHERE c.dept_id = d.dept_id) b   
-                    WHERE date_format(overtime_date, "%%Y-%%m") BETWEEN %s AND %s
-                    AND a.emp_id = b.emp_id
-                    GROUP BY a.dept_name, a.overtime_date
-                    WITH ROLLUP;""" 
+            query = """SELECT ifnull(b.dept_name, "생산본부") as "Dept",  IFNULL(c.emp_name, "") AS "Name",IFNULL(a.yyyy_mm, "합계") AS "Month", round(SUM(a.overtime),2) AS "OVERTIME"
+                        FROM overtime_date a, department b, employee c   
+                        WHERE a.yyyy_mm BETWEEN %s AND %s
+                        AND a.dept_id = b.dept_id
+                        AND a.emp_id = c.emp_id
+                        AND a.dept_id = %s
+                        GROUP BY c.emp_name, a.yyyy_mm
+                        WITH ROLLUP;""" 
+            cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            result = cursor.fetchall()
+
+            if result:
+                self.conn.close()
+                self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
+                return result
+            else:
+                self.conn.close()
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
+
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+    def emp_overtime(self, arr_1):
+        cursor = self.conn.cursor()
+
+        try:
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+            #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+
+            query = """SELECT ifnull(b.dept_name, "생산본부") as "Dept",  IFNULL(c.emp_name, "") AS "Name",IFNULL(a.yyyy_mm, "합계") AS "Month", round(SUM(a.overtime),2) AS "OVERTIME"
+                        FROM overtime_date a, department b, employee c   
+                        WHERE a.yyyy_mm BETWEEN %s AND %s
+                        AND a.dept_id = b.dept_id
+                        AND a.emp_id = c.emp_id
+                        AND c.emp_id = %s
+                        GROUP BY a.yyyy_mm
+                        WITH ROLLUP;""" 
             cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
