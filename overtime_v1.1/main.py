@@ -23,6 +23,9 @@ class WindowClass(QMainWindow, main_window) :
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("인사정보 입력/조회")
+
+        self.date_select.setDate(QDate.currentDate())
+
         # self.slots()
 
         menu_bar = self.menuBar()
@@ -43,7 +46,7 @@ class WindowClass(QMainWindow, main_window) :
 
         overtime_menu.addAction(select_all)
         overtime_menu.addAction(select_dept)
-        # upload_menu.addAction(upload_location)
+        overtime_menu.addAction(upload_overtime)
 
         status_bar = self.statusBar()
         self.setStatusBar(status_bar)
@@ -55,10 +58,16 @@ class WindowClass(QMainWindow, main_window) :
         pass
     
     def select_dept(self):
-        pass
+        import dept_ref as select_dept_window
+
+        self.dept_window = select_dept_window.DeptMainWindow()
+        self.dept_window.show() 
 
     def upload_overtime(self):
-        pass
+        import upload as upload_window
+
+        self.upload_window = upload_window.MainWindow()
+        self.upload_window.show()
 
     def upload_location(self):        
         import upload_location as inv_loc
