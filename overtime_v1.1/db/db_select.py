@@ -182,13 +182,12 @@ class Select:
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
             query = """
-                    SELECT b.dept_id AS "DeptID", b.dept_name AS "DeptNAME", c.emp_id AS "EmpID", c.emp_name AS "Name", 
+                    SELECT a.dept_id AS "DeptID", a.dept_name AS "DeptNAME", a.emp_id AS "EmpID", a.emp_name AS "Name", 
                     a.overtime_date AS "Month", round(a.overtime,2) AS "OVERTIME", a.s_time AS "START", a.t_time AS "END", a.detail AS "DETAIL", a.note AS "NOTE"
-                    FROM overtime a, department b, employee c   
-                    WHERE b.dept_id = %s
-                    AND a.emp_id = c.emp_id
+                    FROM overtime a  
+                    WHERE a.dept_id = %s
                     AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
-                    ORDER BY  b.dept_id, c.emp_id, a.overtime_date
+                    ORDER BY  a.dept_id, a.emp_id, a.overtime_date
                     ;               
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용

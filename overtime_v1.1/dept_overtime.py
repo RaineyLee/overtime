@@ -3,10 +3,12 @@ import sys
 # import warnings
 # import time
 
-from openpyxl import *
+import openpyxl
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
+from datetime import datetime
+from openpyxl.styles import Alignment
 
 # 절대경로를 상대경로로 변경 하는 함수
 def resource_path(relative_path):
@@ -41,6 +43,7 @@ class DeptMainWindow(QWidget, dept_main_window) :
         self.btn_select_dept.clicked.connect(self.popup_dept_info)
         self.btn_select_emp.clicked.connect(self.popup_emp_info)
         self.btn_clear.clicked.connect(self.clear)
+        self.btn_download.clicked.connect(self.make_file)
 
     # def set_date(self):
     #     date = self.date_select.date()
@@ -74,7 +77,7 @@ class DeptMainWindow(QWidget, dept_main_window) :
             select = Select()
             result = select.dept_overtime(arr)
 
-            if result == "":
+            if result is None:
                 return
 
             title = ["부서명", "사원명", "날짜", "잔업시간"]
@@ -87,7 +90,7 @@ class DeptMainWindow(QWidget, dept_main_window) :
             select = Select()
             result = select.emp_overtime(arr)
 
-            if result == "":
+            if result is None:
                 return
 
             title = ["부서명", "사원명", "날짜", "잔업시간"]
@@ -188,6 +191,77 @@ class DeptMainWindow(QWidget, dept_main_window) :
         print(self.dept_id)
         return self.dept_id
         
+     # 테이블에 남겨진 정보를 엑셀로 변환
+    def make_file(self):
+        rows = self.tbl_info.rowCount()
+        cols = self.tbl_info.columnCount()
+
+        list_2 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
+
+        for i in range(rows):
+            list_1 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
+            for j in range(cols): 
+                data = self.tbl_info.item(i,j)
+                list_1.append(data.text())
+            list_2.append(list_1)
+        
+        print(list_2)
+
+        num = len(list_2)
+        self.make_excel(list_2, num)
+        
+
+    # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
+    def make_excel(self, arr, num):
+        wb = openpyxl.Workbook()
+        wb.create_sheet(index=0, title='잔업정보')
+
+        sheet = wb.active
+        list_line = ["부서명", "사원명", "날짜", "잔업시간"]
+        sheet.append(list_line)
+
+        for i in range(num):
+            for j in range(len(list_line)):
+                sheet.cell(row=i+2, column=j+1, value=arr[i][j])
+
+        ## 각 칼럼에 대해서 모든 셀값의 문자열 개수에서 1.1만큼 곱한 것들 중 최대값을 계산한다.
+        for column_cells in sheet.columns:
+            # length = max(len(str(cell.value))*1.1 for cell in column_cells)
+            sheet.column_dimensions[column_cells[0].column_letter].width = 20
+            ## 셀 가운데 정렬
+            for cell in sheet[column_cells[0].column_letter]:
+                cell.alignment = Alignment(horizontal='center')
+        
+        fname = self.file_save()
+
+        try:
+            if fname:
+                self.save_excel(wb, fname)
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+
+    # 파일 저장 대화상자
+    def file_save(self):
+        now = datetime.now()
+        arg_1 = now.strftime('%Y-%m-%d %H-%M-%S')
+        adress = "./excel/download_" + arg_1 + ".xlsx"
+
+        dialog = QFileDialog(self)
+        qurl  = dialog.getSaveFileName(parent=self, caption='Save file', directory=adress)
+        
+        url = qurl[0]
+        try:
+            return url
+        except Exception as e:
+            QMessageBox.about(self, 'Warning', e)
+
+
+    def save_excel(self, workbook, file_name):
+        workbook.save(file_name)
+
+        self.close()
+
     # # def dept_name(self, arg_1):  
     # #     self.txt_dept_id.setText("arg_1.text()")
     # #     print(arg_1)
@@ -253,7 +327,7 @@ class DeptWindow(QDialog, dept_window):
     def get_input_value(self):
         list = self.tbl_info.selectedItems()
         return list
-
+    
     def msg_box(self, arg_1, arg_2):
         msg = QMessageBox()
         msg.setWindowTitle(arg_1)               # 제목설정

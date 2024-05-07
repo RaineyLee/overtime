@@ -3,10 +3,12 @@ import sys
 # import warnings
 # import time
 
-from openpyxl import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, QDate #Alignment 
 from PyQt5 import uic
+import openpyxl
+from openpyxl.styles import Alignment
+from datetime import datetime
 
 # 절대경로를 상대경로로 변경 하는 함수
 def resource_path(relative_path):
@@ -18,11 +20,10 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 #UI파일 연결
-# main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
 total_overtime= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\total_overtime.ui"))[0] # Window 사용시 ui 주소
 dept_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_window.ui"))[0]
+# main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
 # emp_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_window.ui"))[0]
-
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
 
 #화면을 띄우는데 사용되는 Class 선언
@@ -36,10 +37,12 @@ class MainWindow(QWidget, total_overtime) :
         
     def slots(self):
         self.btn_search.clicked.connect(self.make_data)
-        # self.btn_close.clicked.connect(self.window_close)
         self.btn_search_dept.clicked.connect(self.popup_dept_info)
-        # self.btn_select_emp.clicked.connect(self.popup_emp_info)
         self.btn_clear.clicked.connect(self.clear)
+        self.btn_close.clicked.connect(self.close)
+        self.btn_download.clicked.connect(self.make_file)
+        # self.btn_close.clicked.connect(self.window_close)
+        # self.btn_select_emp.clicked.connect(self.popup_emp_info)
 
     # def set_date(self):
     #     date = self.date_select.date()
@@ -50,8 +53,6 @@ class MainWindow(QWidget, total_overtime) :
 
         self.txt_dept_id.setText("")
         self.txt_dept_name.setText("")
-        self.txt_emp_id.setText("")
-        self.txt_emp_name.setText("")
 
     def make_data(self):
         dept_id = self.txt_dept_id.toPlainText()
@@ -64,9 +65,11 @@ class MainWindow(QWidget, total_overtime) :
             select = Select()
 
             result = select.all_overtime_1(arr_1)
-
-            title = ["부서아이디", "부서명", "사번", "이름", "날짜", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
-            self.make_table(len(result), result, title)
+            if result is None:
+                return            
+            else:
+                title = ["부서아이디", "부서명", "사번", "이름", "날짜", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
+                self.make_table(len(result), result, title)
         elif dept_id == "":
             arr_1 = [date_1, date_1]
            
@@ -74,9 +77,11 @@ class MainWindow(QWidget, total_overtime) :
             select = Select()
 
             result = select.all_overtime_2(arr_1)
-
-            title = ["부서아이디", "부서명", "사번", "이름", "날짜", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
-            self.make_table(len(result), result, title)
+            if result is None:
+                return
+            else:
+                title = ["부서아이디", "부서명", "사번", "이름", "날짜", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
+                self.make_table(len(result), result, title)
 
     def make_table(self, num, arr_1, title):   
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
@@ -151,7 +156,74 @@ class MainWindow(QWidget, total_overtime) :
     def get_dept_id(self):
         print(self.dept_id)
         return self.dept_id
+    
+      # 테이블에 남겨진 정보를 엑셀로 변환
+    def make_file(self):
+        rows = self.tbl_info.rowCount()
+        cols = self.tbl_info.columnCount()
 
+        list_2 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
+
+        for i in range(rows):
+            list_1 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
+            for j in range(cols): 
+                data = self.tbl_info.item(i,j)
+                list_1.append(data.text())
+            list_2.append(list_1)
+        
+        print(list_2)
+
+        num = len(list_2)
+        self.make_excel(list_2, num)
+        
+
+    # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
+    def make_excel(self, arr, num):
+        wb = openpyxl.Workbook()
+        wb.create_sheet(index=0, title='잔업정보')
+
+        sheet = wb.active
+        list_line = ["부서아이디", "부서명", "사번", "이름", "날짜", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
+        sheet.append(list_line)
+
+        for i in range(num):
+            for j in range(len(list_line)):
+                sheet.cell(row=i+2, column=j+1, value=arr[i][j])
+
+        ## 각 칼럼에 대해서 모든 셀값의 문자열 개수에서 1.1만큼 곱한 것들 중 최대값을 계산한다.
+        for column_cells in sheet.columns:
+            # length = max(len(str(cell.value))*1.1 for cell in column_cells)
+            sheet.column_dimensions[column_cells[0].column_letter].width = 20
+            ## 셀 가운데 정렬
+            for cell in sheet[column_cells[0].column_letter]:
+                cell.alignment = Alignment(horizontal='center')
+        
+        fname = self.file_save()
+
+        try:
+            if fname:
+                self.save_excel(wb, fname)
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+
+    # 파일 저장 대화상자(파일명 만들기)
+    def file_save(self):
+        now = datetime.now()
+        arg_1 = now.strftime('%Y-%m-%d %H-%M-%S')
+        adress = "./excel/download_" + arg_1 + ".xlsx"
+
+        dialog = QFileDialog(self)
+        qurl  = dialog.getSaveFileName(parent=self, caption='Save file', directory=adress)
+        
+        url = qurl[0]
+        try:
+            return url
+        except Exception as e:
+            QMessageBox.about(self, 'Warning', e)
+
+    def save_excel(self, workbook, file_name):
+        workbook.save(file_name)
 
     def msg_box(self, arg_1, arg_2):
         msg = QMessageBox()
@@ -223,8 +295,6 @@ class DeptWindow(QDialog, dept_window):
 
     def window_close(self):
         self.close()
-
-
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)

@@ -47,7 +47,7 @@ class MainWindow(QWidget, main_window) :
     #     self.date = self.date_edit.date().toString("yyyyMMdd")
 
     def file_open(self):
-        fname = QFileDialog.getOpenFileName(parent=self, caption='Open file', directory='C:.excel/upload')
+        fname = QFileDialog.getOpenFileName(parent=self, caption='Open file', directory='C:.excel/')
 
         if fname[0]:
             self.text_select_file.setText(fname[0])
@@ -56,18 +56,22 @@ class MainWindow(QWidget, main_window) :
             QMessageBox.about(self, 'Warning', '파일을 선택하지 않았습니다.')
 
     def make_data(self):
-        self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
         file_name = self.text_select_file.toPlainText()
+        if file_name == "":
+            return
+        else:
+            self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
+            file_name = self.text_select_file.toPlainText()
 
-        from utils.make_data import Overtime
-        make_data = Overtime(file_name)
+            from utils.make_data import Overtime
+            make_data = Overtime(file_name)
 
-        _list = make_data.excel_data()
+            _list = make_data.excel_data()
 
-        title = _list[1]
-        data = _list[0]
-                
-        self.make_table(len(data), data, title)
+            title = _list[1]
+            data = _list[0]
+                    
+            self.make_table(len(data), data, title)
 
     def make_table(self, num, arr_1, arg_1):   
         col = len(arg_1)
@@ -129,6 +133,9 @@ class MainWindow(QWidget, main_window) :
         result = data_insert.insert_overtime(list)
 
         self.msg_box(result[0], result[1])
+        self.text_select_file.setText("")
+        self.tbl_info.setColumnCount(0)
+        self.tbl_info.setRowCount(0)
 
     # # 부서명 가져오기 팝업
     # def popup_dept_info(self):

@@ -24,8 +24,6 @@ class WindowClass(QMainWindow, main_window) :
         self.setupUi(self)
         self.setWindowTitle("인사정보 입력/조회")
 
-        self.date_select.setDate(QDate.currentDate())
-
         # self.slots()
 
         menu_bar = self.menuBar()
@@ -51,14 +49,17 @@ class WindowClass(QMainWindow, main_window) :
         status_bar = self.statusBar()
         self.setStatusBar(status_bar)
 
-    def outgoing(self):
-        print("new menu call")
+    # def outgoing(self):
+    #     print("new menu call")
 
     def select_all(self):
-        pass
+        import total_overtime as total_overtime_window
+
+        self.total_window = total_overtime_window.MainWindow()
+        self.total_window.show()
     
     def select_dept(self):
-        import dept_ref as select_dept_window
+        import dept_overtime as select_dept_window
 
         self.dept_window = select_dept_window.DeptMainWindow()
         self.dept_window.show() 
@@ -69,35 +70,35 @@ class WindowClass(QMainWindow, main_window) :
         self.upload_window = upload_window.MainWindow()
         self.upload_window.show()
 
-    def upload_location(self):        
-        import upload_location as inv_loc
+    # def upload_location(self):        
+    #     import upload_location as inv_loc
 
-        self.location = inv_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
-        self.location.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.location = inv_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.location.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
-    def upload_barcode(self):
-        import upload_barcode as bar_loc
+    # def upload_barcode(self):
+    #     import upload_barcode as bar_loc
 
-        self.barcode = bar_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
-        self.barcode.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.barcode = bar_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.barcode.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
-    def upload_saleslist(self):
-        import upload_saleslist as saleslist
+    # def upload_saleslist(self):
+    #     import upload_saleslist as saleslist
 
-        self.saleslist = saleslist.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
-        self.saleslist.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.saleslist = saleslist.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.saleslist.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
-    def item_location(self):
-        import toexcel_location as item_loc
+    # def item_location(self):
+    #     import toexcel_location as item_loc
 
-        self.item_loc = item_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
-        self.item_loc.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.item_loc = item_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.item_loc.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
-    def make_cjnumber(self):
-        import CJ_number_v1_2 as cj_number
+    # def make_cjnumber(self):
+    #     import CJ_number_v1_2 as cj_number
 
-        self.cj_number = cj_number.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
-        self.cj_number.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #     self.cj_number = cj_number.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+    #  self.cj_number.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)
