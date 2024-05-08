@@ -309,6 +309,7 @@ class DeptWindow(QDialog, dept_window):
         for i in range(num):
             for j in range(col): # 아니면 10개
                 self.tbl_info.setItem(i, j, QTableWidgetItem(select_dept[i][j]))
+                self.tbl_info.item(i, j).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)  
 
         # 컨텐츠의 길이에 맞추어 컬럼의 길이를 자동으로 조절
         ################################################################
@@ -363,15 +364,18 @@ class EmpWindow(QDialog, emp_window):
             num = 0
         else:
             num = len(select_emp)
-        col = self.tbl_info.columnCount()
+
+        column_title = ["부서아이디", "부서명", "사원번호", "사원명"]
+        col = len(column_title)
 
         self.tbl_info.setRowCount(num)
         self.tbl_info.setColumnCount(col)
-        # self.tbl_info.setHorizontalHeaderLabels(column_title)
+        self.tbl_info.setHorizontalHeaderLabels(column_title)
 
         for i in range(num):
             for j in range(col): # 아니면 10개
                 self.tbl_info.setItem(i, j, QTableWidgetItem(select_emp[i][j]))
+                self.tbl_info.item(i, j).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)  
 
         # 컨텐츠의 길이에 맞추어 컬럼의 길이를 자동으로 조절
         ################################################################

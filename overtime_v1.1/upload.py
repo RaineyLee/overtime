@@ -134,6 +134,8 @@ class MainWindow(QWidget, main_window) :
 
         self.msg_box(result[0], result[1])
         self.text_select_file.setText("")
+        #테이블을 지울경우 clear 같은 종류의 실행문을 쓰면 row 또는 column 헤더가 남는 경우가 생긴다.
+        #column과 row 갯수를 "0"로 만들면 이런 현상이 생기지 않는다.
         self.tbl_info.setColumnCount(0)
         self.tbl_info.setRowCount(0)
 

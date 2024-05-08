@@ -22,13 +22,13 @@ class WindowClass(QMainWindow, main_window) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("인사정보 입력/조회")
+        self.setWindowTitle("DOOCH PUMP HR")
 
         # self.slots()
 
         menu_bar = self.menuBar()
         overtime_menu = menu_bar.addMenu("잔업시간")
-        # upload_menu = menu_bar.addMenu("업로드")
+        hr_menu = menu_bar.addMenu("HR정보")
         
         select_all = QAction('전체 조회', self)
         select_all.setStatusTip("전체 조회")
@@ -42,9 +42,15 @@ class WindowClass(QMainWindow, main_window) :
         upload_overtime.setStatusTip("잔업시간 업로드")
         upload_overtime.triggered.connect(self.upload_overtime)
 
+        emp_master = QAction('인사정보', self)
+        emp_master.setStatusTip("인사정보")
+        emp_master.triggered.connect(self.emp_master)
+
         overtime_menu.addAction(select_all)
         overtime_menu.addAction(select_dept)
         overtime_menu.addAction(upload_overtime)
+
+        hr_menu.addAction(emp_master)
 
         status_bar = self.statusBar()
         self.setStatusBar(status_bar)
@@ -69,6 +75,12 @@ class WindowClass(QMainWindow, main_window) :
 
         self.upload_window = upload_window.MainWindow()
         self.upload_window.show()
+
+    def emp_master(self):
+        import emp_info as emp_info
+
+        self.emp_master = emp_info.MainWindow()
+        self.emp_master.show()
 
     # def upload_location(self):        
     #     import upload_location as inv_loc
