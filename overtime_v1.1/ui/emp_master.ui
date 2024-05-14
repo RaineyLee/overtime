@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>402</width>
-    <height>360</height>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>0</y>
      <width>381</width>
      <height>111</height>
     </rect>
@@ -200,7 +200,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="4">
+    <item row="3" column="3">
      <widget class="QPushButton" name="btn_search">
       <property name="font">
        <font>
@@ -214,45 +214,39 @@
       </property>
      </widget>
     </item>
+    <item row="3" column="4">
+     <widget class="QPushButton" name="btn_input">
+      <property name="font">
+       <font>
+        <family>맑은 고딕</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>입력 / 수정</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QTableWidget" name="tbl_info">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>130</y>
+     <y>120</y>
      <width>381</width>
-     <height>191</height>
+     <height>291</height>
     </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_input">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>330</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>맑은 고딕</family>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>입력 / 수정</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btn_close">
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>330</y>
+     <y>420</y>
      <width>70</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">

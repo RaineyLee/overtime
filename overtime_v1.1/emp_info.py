@@ -33,7 +33,7 @@ class MainWindow(QWidget, emp_window) :
     def slots(self):
         self.btn_dept_search.clicked.connect(self.popup_dept_info)
         self.btn_emp_search.clicked.connect(self.popup_emp_info)
-        # self.btn_search.clicked.connect(self.make_data)
+        self.btn_search.clicked.connect(self.make_data)
         # self.btn_search_dept.clicked.connect(self.popup_dept_info)
         # self.btn_clear.clicked.connect(self.clear)
         # self.btn_close.clicked.connect(self.close)
@@ -60,23 +60,22 @@ class MainWindow(QWidget, emp_window) :
             from db.db_select import Select
             select = Select()
 
-            result = select.select_employee(arg_1)
+            result = select.emp_info_dept(arg_1)
             if result is None:
                 return            
             else:
-                title = ["부서아이디", "부서명", "사번", "이름"]
+                title = ["부서ID", "부서명", "사번", "이름"]
                 self.make_table(len(result), result, title)
         elif dept_id == "":
-            arg_1 = "%%"
            
             from db.db_select import Select
             select = Select()
 
-            result = select.select_employee(arg_1)
+            result = select.emp_info()
             if result is None:
                 return
             else:
-                title = ["부서아이디", "부서명", "사번", "이름"]
+                title = ["부서ID", "부서명", "사번", "이름"]
                 self.make_table(len(result), result, title)
 
     def make_table(self, num, arr_1, title):   

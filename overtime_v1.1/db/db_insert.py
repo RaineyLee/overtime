@@ -77,7 +77,7 @@ class Insert:
         cursor = self.conn.cursor()
 
         try:
-            query = """INSERT INTO overtime (dept_id, dept_name, emp_id, emp_name, overtime_date, s_time, t_time, overtime, detail, note, c_date) 
+            query = """INSERT INTO overtime_upload (dept_id, dept_name, emp_id, emp_name, overtime_date, s_time, t_time, overtime, detail, note, c_date) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());"""
             cursor.executemany(query, arr_1)
             self.conn.commit()

@@ -113,7 +113,7 @@ class Select:
             #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
 
             query = """SELECT ifnull(b.dept_name, "생산본부") as "Dept",  IFNULL(c.emp_name, "") AS "Name",IFNULL(a.yyyy_mm, "합계") AS "Month", round(SUM(a.overtime),2) AS "OVERTIME"
-                        FROM overtime_date a, department b, employee c   
+                        FROM overtime a, department b, employee c   
                         WHERE a.yyyy_mm BETWEEN %s AND %s
                         AND a.dept_id = b.dept_id
                         AND a.emp_id = c.emp_id
@@ -148,7 +148,7 @@ class Select:
             #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
 
             query = """SELECT ifnull(b.dept_name, "생산본부") as "Dept",  IFNULL(c.emp_name, "") AS "Name",IFNULL(a.yyyy_mm, "합계") AS "Month", round(SUM(a.overtime),2) AS "OVERTIME"
-                        FROM overtime_date a, department b, employee c   
+                        FROM overtime a, department b, employee c   
                         WHERE a.yyyy_mm BETWEEN %s AND %s
                         AND a.dept_id = b.dept_id
                         AND a.emp_id = c.emp_id
@@ -229,6 +229,104 @@ class Select:
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
             cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            result = cursor.fetchall()
+
+            if result:
+                self.conn.close()
+                self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
+                return result
+            else:
+                self.conn.close()
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
+
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+    def emp_info(self):
+        cursor = self.conn.cursor()
+
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+        try:
+            query = """
+                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name, a.yn
+                    FROM employee a, department b
+                    WHERE a.dept_id = b.dept_id
+                    ;               
+                    """ 
+                                #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            result = cursor.fetchall()
+
+            if result:
+                self.conn.close()
+                self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
+                return result
+            else:
+                self.conn.close()
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
+
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+    def emp_info_dept(self, arg_1):
+        cursor = self.conn.cursor()
+
+        try:
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+
+            query = """
+                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name
+                    FROM employee a, department b
+                    WHERE a.dept_id = b.dept_id AND b.dept_id = %s
+                    ;               
+                    """ 
+                                #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query, arg_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            result = cursor.fetchall()
+
+            if result:
+                self.conn.close()
+                self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
+                return result
+            else:
+                self.conn.close()
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
+
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+    def emp_info_dept_emp(self, arg_1):
+        cursor = self.conn.cursor()
+
+        try:
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+
+            query = """
+                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name
+                    FROM employee a, department b
+                    WHERE a.dept_id = b.dept_id AND a.emp_id = %s
+                    ;               
+                    """ 
+                                #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query, arg_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
             if result:
