@@ -53,6 +53,7 @@ class MainWindow(QWidget, emp_window) :
 
     def make_data(self):
         dept_id = self.txt_dept_id.toPlainText()
+        emp_id = self.txt_emp_id.toPlainText()
 
         if  dept_id:
             arg_1 = dept_id
@@ -64,7 +65,19 @@ class MainWindow(QWidget, emp_window) :
             if result is None:
                 return            
             else:
-                title = ["부서ID", "부서명", "사번", "이름"]
+                title = ["부서ID", "부서명", "사번", "이름", "사용유무"]
+                self.make_table(len(result), result, title)
+        elif dept_id and emp_id:
+            arg_1 = emp_id
+
+            from db.db_select import Select
+            select = Select()
+
+            result = select.emp_info_dept_emp(arg_1)
+            if result is None:
+                return            
+            else:
+                title = ["부서ID", "부서명", "사번", "이름", "사용유무"]
                 self.make_table(len(result), result, title)
         elif dept_id == "":
            
@@ -75,7 +88,7 @@ class MainWindow(QWidget, emp_window) :
             if result is None:
                 return
             else:
-                title = ["부서ID", "부서명", "사번", "이름"]
+                title = ["부서ID", "부서명", "사번", "이름", "사용유무"]
                 self.make_table(len(result), result, title)
 
     def make_table(self, num, arr_1, title):   

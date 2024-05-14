@@ -287,7 +287,7 @@ class Select:
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
             query = """
-                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name
+                    SELECT a.dept_id, b.dept_name, a.emp_id, a.emp_name, a.yn
                     FROM employee a, department b
                     WHERE a.dept_id = b.dept_id AND b.dept_id = %s
                     ;               
@@ -320,7 +320,7 @@ class Select:
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
             query = """
-                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name
+                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name, a.yn
                     FROM employee a, department b
                     WHERE a.dept_id = b.dept_id AND a.emp_id = %s
                     ;               
