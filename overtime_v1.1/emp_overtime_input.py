@@ -43,6 +43,8 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         self.btn_select_dept.clicked.connect(self.popup_dept_info)
         self.btn_select_emp.clicked.connect(self.popup_emp_info)
         self.btn_input.clicked.connect(self.input_data)
+        self.btn_delete.clicked.connect(self.delete_rows)
+        self.btn_save.clicked.connect(self.upload)
         # self.btn_clear.clicked.connect(self.clear)
 
     # def set_date(self):
@@ -56,47 +58,6 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         self.txt_dept_name.setText("")
         self.txt_emp_id.setText("")
         self.txt_emp_name.setText("")
-
-    def make_data(self):
-        dept_id = self.txt_dept_id.toPlainText()
-        emp_id = self.txt_emp_id.toPlainText()
-
-        date_1 = self.from_date.date()
-        date_2 = self.to_date.date()
-
-        from_date = date_1.toString("yyyy-MM")
-        to_date = date_2.toString("yyyy-MM")
-
-        if  dept_id == "":
-            self.msg_box("입력누락", "부서를 선택하세요")
-        elif dept_id and emp_id == "":            
-            dept_id = self.txt_dept_id.toPlainText()
-            arr = [from_date, to_date, dept_id]
-
-            from db.db_select import Select
-            select = Select()
-            result = select.emp_overtime_1(arr)
-
-            if result is None:
-                return
-
-            title = ["부서명", "사원명", "날짜", "잔업시간"]
-            self.make_table(len(result), result, title)
-        elif dept_id and emp_id:
-            dept_id = self.txt_dept_id.toPlainText()
-            arr = [from_date, to_date, emp_id]
-
-            from db.db_select import Select
-            select = Select()
-            result = select.emp_overtime_2(arr)
-
-            if result is None:
-                return
-
-            title = ["부서명", "사원명", "날짜", "잔업시간"]
-            self.make_table(len(result), result, title)
-        else:
-            self.msg_box("입력오류", "입력값을 확인 하세요.")
 
     def input_data(self):
 
@@ -113,7 +74,7 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         detail = self.txt_detail.toPlainText()
         note = self.txt_note.toPlainText()
 
-        list = [dept_id, dept_name, emp_id, emp_name, overtime_date, str(overtime), from_time, to_time, detail, note]
+        list = [dept_id, dept_name, emp_id, emp_name, overtime_date, from_time, to_time, str(overtime), detail, note]
         title = ["부서ID", "부서명", "사번", "사원명", "잔업일자", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
         
         # 필수 입력값 
@@ -146,7 +107,7 @@ class MainWindow(QWidget, emp_overtime_input_window) :
             self.txt_to_time.setText("")
             self.txt_detail.setText("")
             self.txt_note.setText("")
-
+        
     # 테이블 선택범위 삭제
     def delete_rows(self):
         indexes = []
@@ -166,24 +127,25 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         for rowid in rows:
             self.tbl_info.removeRow(rowid)
 
-    # def upload(self):
-    #     # 현재 테이블 데이터(수정, 삭제 될 수 있다.)
-    #     rows = self.tbl_info.rowCount()
-    #     cols = self.tbl_info.columnCount()
+    def upload(self):
+        # 현재 테이블 데이터(수정, 삭제 될 수 있다.)
+        rows = self.tbl_info.rowCount()
+        cols = self.tbl_info.columnCount()
 
-    #     list = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
-    #     for i in range(rows):
-    #         list_1 = []
-    #         for j in range(cols):
-    #             data = self.tbl_info.item(i,j)
-    #             list_1.append(data.text())
-    #         list.append(list_1)
+        list = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
+        for i in range(rows):
+            list_1 = []
+            for j in range(cols):
+                data = self.tbl_info.item(i,j)
+                list_1.append(data.text())
+            list.append(list_1)
 
-    #     from db.db_insert import Insert
-    #     data_insert = Insert()
-    #     result = data_insert.insert_overtime(list)
+        from db.db_insert import Insert
+        data_insert = Insert()
+        result = data_insert.insert_overtime(list)
 
-    #     self.msg_box(result[0], result[1])
+        self.msg_box(result[0], result[1])
+        self.tbl_info.setRowCount(0)
 
     # 부서명 가져오기 팝업
     def popup_dept_info(self):

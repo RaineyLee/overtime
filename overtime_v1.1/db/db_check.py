@@ -49,6 +49,7 @@ class Check:
                 return True
             else:
                 self.msg_box("오류", "입력된 부서/인사정보를 확인 하세요.")
+                return
 
         except Exception as e:
             self.msg_box("Error", str(e))
