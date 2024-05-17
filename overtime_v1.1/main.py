@@ -34,8 +34,8 @@ class WindowClass(QMainWindow, main_window) :
         select_all.setStatusTip("전체 조회")
         select_all.triggered.connect(self.select_all)
 
-        select_dept = QAction('부서별 조회', self)
-        select_dept.setStatusTip("부서별 조회")
+        select_dept = QAction('사원별 조회', self)
+        select_dept.setStatusTip("사원별 조회")
         select_dept.triggered.connect(self.select_dept)
 
         upload_overtime = QAction('잔업시간 업로드', self)

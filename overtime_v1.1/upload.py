@@ -127,33 +127,44 @@ class MainWindow(QWidget, main_window) :
                 data = self.tbl_info.item(i,j)
                 list_1.append(data.text())
             list.append(list_1)
-
-        from db.db_insert import Insert
-        data_insert = Insert()
-        result = data_insert.insert_overtime(list)
-
-        self.msg_box(result[0], result[1])
-        self.text_select_file.setText("")
-        #테이블을 지울경우 clear 같은 종류의 실행문을 쓰면 row 또는 column 헤더가 남는 경우가 생긴다.
-        #column과 row 갯수를 "0"로 만들면 이런 현상이 생기지 않는다.
-        self.tbl_info.setColumnCount(0)
-        self.tbl_info.setRowCount(0)
-
-    # # 부서명 가져오기 팝업
-    # def popup_dept_info(self):
-    #     input_dialog = InputWindow()
-    #     if input_dialog.exec_():
-    #         value = input_dialog.get_input_value()
-
-    #     try:
-    #         self.txt_dept_id.setText(value[0].text())
-    #         self.txt_dept_name.setText(value[1].text())
-    #     except:
-    #         return
         
-    # def dept_name(self, arg_1):  
-    #     self.txt_dept_id.setText("arg_1.text()")
-    #     print(arg_1)
+        arr_1 = []
+        for i in list:
+            arr_11 = (i[0], i[1], i[2], i[3])
+            arr_1.append(str(arr_11))   
+        arr_1 = tuple((arr_1))
+
+        from db.db_check import Check
+        check_info = Check()
+        _check = check_info.check_dept_emp_info(arr_1)
+
+        if _check:
+            from db.db_insert import Insert
+            data_insert = Insert()
+            result = data_insert.insert_overtime(list)
+
+            self.msg_box(result[0], result[1])
+            self.text_select_file.setText("")
+            #테이블을 지울경우 clear 같은 종류의 실행문을 쓰면 row 또는 column 헤더가 남는 경우가 생긴다.
+            #column과 row 갯수를 "0"로 만들면 이런 현상이 생기지 않는다.
+            self.tbl_info.setColumnCount(0)
+            self.tbl_info.setRowCount(0)
+
+        # # 부서명 가져오기 팝업
+        # def popup_dept_info(self):
+        #     input_dialog = InputWindow()
+        #     if input_dialog.exec_():
+        #         value = input_dialog.get_input_value()
+
+        #     try:
+        #         self.txt_dept_id.setText(value[0].text())
+        #         self.txt_dept_name.setText(value[1].text())
+        #     except:
+        #         return
+            
+        # def dept_name(self, arg_1):  
+        #     self.txt_dept_id.setText("arg_1.text()")
+        #     print(arg_1)
 
     def msg_box(self, arg_1, arg_2):
         msg = QMessageBox()
