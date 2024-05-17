@@ -34,9 +34,13 @@ class WindowClass(QMainWindow, main_window) :
         select_all.setStatusTip("전체 조회")
         select_all.triggered.connect(self.select_all)
 
-        select_dept = QAction('사원별 조회', self)
-        select_dept.setStatusTip("사원별 조회")
+        select_dept = QAction('부서별 조회', self)
+        select_dept.setStatusTip("부서별 조회")
         select_dept.triggered.connect(self.select_dept)
+
+        select_emp = QAction('사원별 조회', self)
+        select_emp.setStatusTip("사원별 조회")
+        select_emp.triggered.connect(self.select_emp)
 
         upload_overtime = QAction('잔업시간 업로드', self)
         upload_overtime.setStatusTip("잔업시간 업로드")
@@ -48,6 +52,7 @@ class WindowClass(QMainWindow, main_window) :
 
         overtime_menu.addAction(select_all)
         overtime_menu.addAction(select_dept)
+        overtime_menu.addAction(select_emp)
         overtime_menu.addAction(upload_overtime)
 
         hr_menu.addAction(emp_master)
@@ -63,12 +68,18 @@ class WindowClass(QMainWindow, main_window) :
 
         self.total_window = total_overtime_window.MainWindow()
         self.total_window.show()
-    
+
     def select_dept(self):
         import dept_overtime as select_dept_window
 
         self.dept_window = select_dept_window.DeptMainWindow()
-        self.dept_window.show() 
+        self.dept_window.show()
+    
+    def select_emp(self):
+        import emp_overtime as select_emp_window
+
+        self.emp_window = select_emp_window.EmpMainWindow()
+        self.emp_window.show() 
 
     def upload_overtime(self):
         import upload as upload_window

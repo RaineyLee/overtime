@@ -21,26 +21,27 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-dept_main_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_search.ui"))[0] # Window 사용시 ui 주소
+emp_main_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_search.ui"))[0] # Window 사용시 ui 주소
 dept_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_window.ui"))[0]
 emp_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_window.ui"))[0]
 
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
 
 #화면을 띄우는데 사용되는 Class 선언
-class DeptMainWindow(QWidget, dept_main_window) :
+class EmpMainWindow(QWidget, emp_main_window) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("부서별 잔업시간 조회")
+        self.setWindowTitle("사원별 잔업시간 조회")
         self.slots()
         # self.date_edit.setDate(QDate.currentDate())
         # self.date = self.date_edit.date().toString("yyyyMMdd")
 
     def slots(self):
         self.btn_search.clicked.connect(self.make_data)
-        self.btn_select_dept.clicked.connect(self.popup_dept_info)
         self.btn_close.clicked.connect(self.window_close)
+        self.btn_select_dept.clicked.connect(self.popup_dept_info)
+        self.btn_select_emp.clicked.connect(self.popup_emp_info)
         self.btn_clear.clicked.connect(self.clear)
         self.btn_download.clicked.connect(self.make_file)
 
@@ -53,38 +54,49 @@ class DeptMainWindow(QWidget, dept_main_window) :
 
         self.txt_dept_id.setText("")
         self.txt_dept_name.setText("")
+        self.txt_emp_id.setText("")
+        self.txt_emp_name.setText("")
 
     def make_data(self):
         dept_id = self.txt_dept_id.toPlainText()
-        
+        emp_id = self.txt_emp_id.toPlainText()
+
         date_1 = self.from_date.date()
         date_2 = self.to_date.date()
-        
+
         from_date = date_1.toString("yyyy-MM")
         to_date = date_2.toString("yyyy-MM")
 
-        if dept_id == "":
-            dept_id = '%%'
+        if  dept_id == "":
+            self.msg_box("입력누락", "부서를 선택하세요")
+        elif dept_id and emp_id == "":            
+            dept_id = self.txt_dept_id.toPlainText()
             arr = [from_date, to_date, dept_id]
 
             from db.db_select import Select
             select = Select()
-            result = select.dept_overtime_1(arr)
+            result = select.emp_overtime_1(arr)
 
             if result is None:
                 return
-        else:            
-            arr = [from_date, to_date, dept_id]
+
+            title = ["부서명", "사원명", "날짜", "잔업시간"]
+            self.make_table(len(result), result, title)
+        elif dept_id and emp_id:
+            dept_id = self.txt_dept_id.toPlainText()
+            arr = [from_date, to_date, emp_id]
 
             from db.db_select import Select
             select = Select()
-            result = select.dept_overtime_2(arr)
+            result = select.emp_overtime_2(arr)
 
             if result is None:
                 return
 
-        title = ["부서명", "날짜", "잔업시간"]
-        self.make_table(len(result), result, title)
+            title = ["부서명", "사원명", "날짜", "잔업시간"]
+            self.make_table(len(result), result, title)
+        else:
+            self.msg_box("입력오류", "입력값을 확인 하세요.")
 
     def make_table(self, num, arr_1, title):   
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
@@ -200,7 +212,7 @@ class DeptMainWindow(QWidget, dept_main_window) :
         wb.create_sheet(index=0, title='잔업정보')
 
         sheet = wb.active
-        list_line = ["부서명", "날짜", "잔업시간"]
+        list_line = ["부서명", "사원명", "날짜", "잔업시간"]
         sheet.append(list_line)
 
         for i in range(num):
