@@ -5,7 +5,7 @@ import sys
 
 import openpyxl
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize, QDate
 from PyQt5 import uic
 from datetime import datetime
 from openpyxl.styles import Alignment
@@ -21,9 +21,9 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-emp_main_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_search.ui"))[0] # Window 사용시 ui 주소
-dept_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_window.ui"))[0]
-emp_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_window.ui"))[0]
+emp_main_window= uic.loadUiType(resource_path("./ui/emp_search.ui"))[0] # Window 사용시 ui 주소
+dept_window = uic.loadUiType(resource_path("./ui/dept_window.ui"))[0]
+emp_window = uic.loadUiType(resource_path("./ui/emp_window.ui"))[0]
 
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
 
@@ -34,8 +34,10 @@ class EmpMainWindow(QWidget, emp_main_window) :
         self.setupUi(self)
         self.setWindowTitle("사원별 잔업시간 조회")
         self.slots()
-        # self.date_edit.setDate(QDate.currentDate())
+        self.from_date.setDate(QDate.currentDate())
+        self.to_date.setDate(QDate.currentDate())
         # self.date = self.date_edit.date().toString("yyyyMMdd")
+        self.setFixedSize(QSize(626,814))
 
     def slots(self):
         self.btn_search.clicked.connect(self.make_data)

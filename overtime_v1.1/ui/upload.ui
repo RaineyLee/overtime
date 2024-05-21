@@ -164,6 +164,12 @@
      <height>30</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>AcadEref</family>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </widget>
   <widget class="QPushButton" name="btn_delete">
    <property name="geometry">

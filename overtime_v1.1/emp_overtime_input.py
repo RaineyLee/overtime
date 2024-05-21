@@ -3,11 +3,9 @@ import sys
 # import warnings
 # import time
 
-import openpyxl
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize, QDate
 from PyQt5 import uic
-from datetime import datetime
 from openpyxl.styles import Alignment
 
 # 절대경로를 상대경로로 변경 하는 함수
@@ -21,9 +19,9 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-emp_overtime_input_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_overtime_input.ui"))[0] # Window 사용시 ui 주소
-dept_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_window.ui"))[0]
-emp_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_window.ui"))[0]
+emp_overtime_input_window= uic.loadUiType(resource_path("./ui/emp_overtime_input.ui"))[0] # Window 사용시 ui 주소
+dept_window = uic.loadUiType(resource_path("./ui/dept_window.ui"))[0]
+emp_window = uic.loadUiType(resource_path("./ui/emp_window.ui"))[0]
 
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
 
@@ -34,8 +32,9 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         self.setupUi(self)
         self.setWindowTitle("사원 잔업시간 입력")
         self.slots()
-        # self.date_edit.setDate(QDate.currentDate())
+        self.date.setDate(QDate.currentDate())
         # self.date = self.date_edit.date().toString("yyyyMMdd")
+        self.setFixedSize(QSize(1079,823))
 
     def slots(self):
         # self.btn_search.clicked.connect(self.make_data)
@@ -74,7 +73,7 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         detail = self.txt_detail.toPlainText()
         note = self.txt_note.toPlainText()
 
-        list = [dept_id, dept_name, emp_id, emp_name, overtime_date, from_time, to_time, str(overtime), detail, note]
+        list = [dept_id, dept_name, emp_id, emp_name, overtime_date, str(overtime), from_time, to_time, detail, note]
         title = ["부서ID", "부서명", "사번", "사원명", "잔업일자", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
         
         # 필수 입력값 

@@ -2,7 +2,7 @@ import os
 import sys
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from PyQt5 import uic
 
 # 절대경로를 상대경로로 변경 하는 함수
@@ -29,16 +29,20 @@ class MainWindow(QWidget, emp_window) :
         self.setupUi(self)
         self.setWindowTitle("인사정보 조회")
         self.slots()
+
+        use = ['y', 'n']
+        self.cmb_yn.addItems(use)
+
+        self.setFixedSize(QSize(400, 450))
         
     def slots(self):
         self.btn_dept_search.clicked.connect(self.popup_dept_info)
         self.btn_emp_search.clicked.connect(self.popup_emp_info)
         self.btn_search.clicked.connect(self.make_data)
-        # self.btn_search_dept.clicked.connect(self.popup_dept_info)
+        self.btn_close.clicked.connect(self.window_close)
         # self.btn_clear.clicked.connect(self.clear)
         # self.btn_close.clicked.connect(self.close)
         # self.btn_download.clicked.connect(self.make_file)
-        # # self.btn_close.clicked.connect(self.window_close)
         # self.btn_select_emp.clicked.connect(self.popup_emp_info)
 
     # def set_date(self):
@@ -54,30 +58,29 @@ class MainWindow(QWidget, emp_window) :
     def make_data(self):
         dept_id = self.txt_dept_id.toPlainText()
         emp_id = self.txt_emp_id.toPlainText()
+        use = self.cmb_yn.currentText()
 
-        if  dept_id:
-            arg_1 = dept_id
+        if dept_id and emp_id:
+
+            from db.db_select import Select
+            select = Select()
+
+            result = select.emp_info_dept_emp([emp_id, use])
+            if result is None:
+                return            
+            else:
+                title = ["부서ID", "부서명", "사번", "이름", "사용"]
+                self.make_table(len(result), result, title)
+        elif  dept_id:
            
             from db.db_select import Select
             select = Select()
 
-            result = select.emp_info_dept(arg_1)
+            result = select.emp_info_dept([dept_id, use])
             if result is None:
                 return            
             else:
-                title = ["부서ID", "부서명", "사번", "이름", "사용유무"]
-                self.make_table(len(result), result, title)
-        elif dept_id and emp_id:
-            arg_1 = emp_id
-
-            from db.db_select import Select
-            select = Select()
-
-            result = select.emp_info_dept_emp(arg_1)
-            if result is None:
-                return            
-            else:
-                title = ["부서ID", "부서명", "사번", "이름", "사용유무"]
+                title = ["부서ID", "부서명", "사번", "이름", "사용"]
                 self.make_table(len(result), result, title)
         elif dept_id == "":
            
@@ -88,7 +91,7 @@ class MainWindow(QWidget, emp_window) :
             if result is None:
                 return
             else:
-                title = ["부서ID", "부서명", "사번", "이름", "사용유무"]
+                title = ["부서ID", "부서명", "사번", "이름", "사용"]
                 self.make_table(len(result), result, title)
 
     def make_table(self, num, arr_1, title):   
@@ -116,6 +119,7 @@ class MainWindow(QWidget, emp_window) :
 
         # 테이블의 길이에 맞추어 컬럼 길이를 균등하게 확장
         self.tbl_info.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
     
     # 테이블 선택범위 삭제
     def delete_rows(self):
@@ -138,7 +142,6 @@ class MainWindow(QWidget, emp_window) :
 
     # 부서명 가져오기 팝업
     def popup_dept_info(self):
-        print("alksdjfhla")
         input_dialog = DeptWindow()
         if input_dialog.exec_():
             value = input_dialog.get_input_value()
@@ -179,6 +182,7 @@ class DeptWindow(QDialog, dept_dial_window):
         self.slots()
 
         self.make_table()
+        self.setFixedSize(QSize(290, 360))
 
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############

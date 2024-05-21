@@ -4,7 +4,7 @@ import sys
 # import time
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QDate #Alignment 
+from PyQt5.QtCore import Qt, QDate, QSize
 from PyQt5 import uic
 import openpyxl
 from openpyxl.styles import Alignment
@@ -20,8 +20,8 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 #UI파일 연결
-total_overtime= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\total_overtime.ui"))[0] # Window 사용시 ui 주소
-dept_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_window.ui"))[0]
+total_overtime= uic.loadUiType(resource_path("./ui/total_overtime.ui"))[0] # Window 사용시 ui 주소
+dept_window = uic.loadUiType(resource_path("./ui/dept_window.ui"))[0]
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
 # emp_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_window.ui"))[0]
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
@@ -35,6 +35,10 @@ class MainWindow(QWidget, total_overtime) :
         self.slots()
         self.date_select_1.setDate(QDate.currentDate())
         self.date_select_2.setDate(QDate.currentDate())
+        self.setFixedSize(QSize(1286,817))
+
+        self.txt_dept_id.setAlignment(Qt.AlignRight)
+        self.txt_dept_id.setAlignment(Qt.AlignCenter)
         
     def slots(self):
         self.btn_search.clicked.connect(self.make_data)
@@ -57,8 +61,8 @@ class MainWindow(QWidget, total_overtime) :
 
     def make_data(self):
         dept_id = self.txt_dept_id.toPlainText()
-        date_1 = self.date_select_1.date().toString("yyyy-MM")
-        date_2 = self.date_select_2.date().toString("yyyy-MM")
+        date_1 = self.date_select_1.date().toString("yyyy-MM-dd")
+        date_2 = self.date_select_2.date().toString("yyyy-MM-dd")
 
         if  dept_id:
             arr_1 = [dept_id, date_1, date_2]

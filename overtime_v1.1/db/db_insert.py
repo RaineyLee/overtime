@@ -73,13 +73,13 @@ class Insert:
 
     #     return ("완료", "제품 출고정보가 정상적으로 업로드 되었습니다.")
 
-    def insert_overtime(self, arr_1):
+    def insert_overtime(self, arr):
         cursor = self.conn.cursor()
 
         try:
             query = """INSERT INTO overtime_upload (dept_id, dept_name, emp_id, emp_name, overtime_date, s_time, t_time, overtime, detail, note, c_date) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());"""
-            cursor.executemany(query, arr_1)
+            cursor.executemany(query, arr)
             self.conn.commit()
             self.conn.close()
 
@@ -88,6 +88,43 @@ class Insert:
             return error
 
         return ("완료", "잔업 정보가 업로드 되었습니다.")
+    
+    def update_emp_info(self, arr):
+        cursor = self.conn.cursor()
+
+        try:
+            query = """
+                    UPDATE employee
+                    SET dept_id = %s, yn = %s, u_date = NOW()
+                    WHERE emp_id = %s;
+                    """
+            cursor.executemany(query, arr)
+            self.conn.commit()
+            self.conn.close()
+
+        except Exception as e:
+            error = ("Error", str(e))
+            return error
+
+        return ("완료", "인사정보가 업데이트 되었습니다.")
+    
+    def insert_emp_info(self, arr):
+        cursor = self.conn.cursor()
+
+        try:
+            query = """
+                    INSERT INTO employee (dept_id, dept_name, emp_id, emp_name, yn, c_date)
+                    VALUES (%s, %s, %s, %s, %s, NOW());
+                    """
+            cursor.executemany(query, arr)
+            self.conn.commit()
+            self.conn.close()
+
+        except Exception as e:
+            error = ("Error", str(e))
+            return error
+
+        return ("완료", "인사정보가 입력 되었습니다.")
 
 # (send_date, order_num, order_date, customer_num, 
 #             order_customer, item_id, item_name, serial, ea, warehouse, message_1, destination, send_num, total_amount, second_amount, item_quantity, yesno, inout, item_loc, message_2, box_num, confirm_date, sending_date, message_3, date_1, date_2, ,emp_1, edit_date, completed)

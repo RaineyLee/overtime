@@ -5,7 +5,7 @@ import sys
 
 import openpyxl
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize, QDate
 from PyQt5 import uic
 from datetime import datetime
 from openpyxl.styles import Alignment
@@ -21,9 +21,9 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-dept_main_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_search.ui"))[0] # Window 사용시 ui 주소
-dept_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\dept_window.ui"))[0]
-emp_window = uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\emp_window.ui"))[0]
+dept_main_window= uic.loadUiType(resource_path("./ui/dept_search.ui"))[0] # Window 사용시 ui 주소
+dept_window = uic.loadUiType(resource_path("./ui/dept_window.ui"))[0]
+emp_window = uic.loadUiType(resource_path("./ui/emp_window.ui"))[0]
 
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
 
@@ -34,8 +34,11 @@ class DeptMainWindow(QWidget, dept_main_window) :
         self.setupUi(self)
         self.setWindowTitle("부서별 잔업시간 조회")
         self.slots()
-        # self.date_edit.setDate(QDate.currentDate())
+        self.from_date.setDate(QDate.currentDate())
+        self.to_date.setDate(QDate.currentDate())
         # self.date = self.date_edit.date().toString("yyyyMMdd")
+
+        self.setFixedSize(QSize(622, 813))
 
     def slots(self):
         self.btn_search.clicked.connect(self.make_data)
@@ -267,6 +270,7 @@ class DeptWindow(QDialog, dept_window):
         self.slots()
 
         self.make_table()
+        self.setFixedSize(QSize(290, 360))
 
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
@@ -331,6 +335,7 @@ class EmpWindow(QDialog, emp_window):
         self.dept_id = arg_1
 
         self.make_table()
+        self.setFixedSize(QSize(540, 540))
 
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############

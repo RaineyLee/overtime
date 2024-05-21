@@ -5,7 +5,7 @@ import sys
 
 from openpyxl import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QSize
 from PyQt5 import uic
 
 # 절대경로를 상대경로로 변경 하는 함수
@@ -19,7 +19,7 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-main_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\overtime_v1.1\\ui\\upload.ui"))[0] # Window 사용시 ui 주소
+main_window= uic.loadUiType(resource_path("./ui/upload.ui"))[0] # Window 사용시 ui 주소
 
 # dial_window= uic.loadUiType(resource_path("C:\\myproject\\python project\\overtime\\popup_dept_info.ui"))[0] # Window 사용시 ui 주소
 
@@ -30,7 +30,7 @@ class MainWindow(QWidget, main_window) :
         self.setupUi(self)
         self.setWindowTitle("잔업시간 업로드")
         self.slots()
-
+        self.setFixedSize(QSize(971,818))
         # self.date_edit.setDate(QDate.currentDate())
         # self.date = self.date_edit.date().toString("yyyyMMdd")
 
@@ -47,7 +47,7 @@ class MainWindow(QWidget, main_window) :
     #     self.date = self.date_edit.date().toString("yyyyMMdd")
 
     def file_open(self):
-        fname = QFileDialog.getOpenFileName(parent=self, caption='Open file', directory='C:.excel/')
+        fname = QFileDialog.getOpenFileName(parent=self, caption='Open file', directory='./excel/')
 
         if fname[0]:
             self.text_select_file.setText(fname[0])

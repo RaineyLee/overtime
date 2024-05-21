@@ -258,10 +258,11 @@ class Select:
                     a.overtime_date AS "Month", round(a.overtime,2) AS "OVERTIME", a.s_time AS "START", a.t_time AS "END", a.detail AS "DETAIL", a.note AS "NOTE"
                     FROM overtime a  
                     WHERE a.dept_id = %s
-                    AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
+                    AND a.overtime_date BETWEEN %s AND %s
                     ORDER BY  a.dept_id, a.emp_id, a.overtime_date
                     ;               
                     """ 
+                    # 월로 비교하기 AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
             cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
@@ -295,10 +296,11 @@ class Select:
                     FROM overtime a, department b, employee c   
                     WHERE a.emp_id = c.emp_id
                     AND a.dept_id = b.dept_id
-                    AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
+                    AND a.overtime_date BETWEEN %s AND %s 
                     ORDER BY  b.dept_id, c.emp_id, a.overtime_date
                     ;               
                     """ 
+                    # 월로 비교 하기 AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
             cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
@@ -326,7 +328,7 @@ class Select:
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
         try:
             query = """
-                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name, a.yn
+                    SELECT a.dept_id, b.dept_name, a.emp_id, a.emp_name, a.yn
                     FROM employee a, department b
                     WHERE a.dept_id = b.dept_id
                     ;               
@@ -347,7 +349,7 @@ class Select:
         except Exception as e:
             self.msg_box("Error", str(e))
 
-    def emp_info_dept(self, arg_1):
+    def emp_info_dept(self, arr_1):
         cursor = self.conn.cursor()
 
         try:
@@ -361,11 +363,11 @@ class Select:
             query = """
                     SELECT a.dept_id, b.dept_name, a.emp_id, a.emp_name, a.yn
                     FROM employee a, department b
-                    WHERE a.dept_id = b.dept_id AND b.dept_id = %s
+                    WHERE a.dept_id = b.dept_id AND b.dept_id = %s AND a.yn = %s
                     ;               
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
-            cursor.execute(query, arg_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
             if result:
@@ -380,7 +382,7 @@ class Select:
         except Exception as e:
             self.msg_box("Error", str(e))
 
-    def emp_info_dept_emp(self, arg_1):
+    def emp_info_dept_emp(self, arr_1):
         cursor = self.conn.cursor()
 
         try:
@@ -392,13 +394,13 @@ class Select:
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
             query = """
-                    SELECT a.emp_id, a.emp_name, a.dept_id, b.dept_name, a.yn
+                    SELECT a.dept_id, b.dept_name, a.emp_id, a.emp_name, a.yn
                     FROM employee a, department b
-                    WHERE a.dept_id = b.dept_id AND a.emp_id = %s
+                    WHERE a.dept_id = b.dept_id AND a.emp_id = %s AND a.yn = %s
                     ;               
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
-            cursor.execute(query, arg_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
             if result:
