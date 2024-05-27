@@ -29,7 +29,8 @@ class WindowClass(QMainWindow, main_window) :
 
         menu_bar = self.menuBar()
         hr_menu = menu_bar.addMenu("인사정보")
-        overtime_menu = menu_bar.addMenu("잔업시간")
+        overtime_info = menu_bar.addMenu("잔업시간")
+        overtime_upload = menu_bar.addMenu("잔업시간")
         
         select_all = QAction('전체 조회', self)
         select_all.setStatusTip("전체 조회")
@@ -43,6 +44,10 @@ class WindowClass(QMainWindow, main_window) :
         select_emp.setStatusTip("사원별 조회")
         select_emp.triggered.connect(self.select_emp)
 
+        input_emp = QAction('잔업시간 수정', self)
+        input_emp.setStatusTip("잔업시간 수정")
+        input_emp.triggered.connect(self.update_emp)
+        
         input_emp = QAction('잔업시간 입력', self)
         input_emp.setStatusTip("잔업시간 입력")
         input_emp.triggered.connect(self.input_emp)
@@ -55,11 +60,13 @@ class WindowClass(QMainWindow, main_window) :
         emp_master.setStatusTip("인사정보")
         emp_master.triggered.connect(self.emp_master)
 
-        overtime_menu.addAction(select_all)
-        overtime_menu.addAction(select_dept)
-        overtime_menu.addAction(select_emp)
-        overtime_menu.addAction(input_emp)
-        overtime_menu.addAction(upload_overtime)
+        overtime_info.addAction(select_all)
+        overtime_info.addAction(select_dept)
+        overtime_info.addAction(select_emp)
+
+        overtime_update.addAction(update_emp)
+        overtime_upload.addAction(input_emp)
+        overtime_upload.addAction(upload_overtime)
 
         hr_menu.addAction(emp_master)
 
@@ -87,6 +94,12 @@ class WindowClass(QMainWindow, main_window) :
         self.emp_window = select_emp_window.EmpMainWindow()
         self.emp_window.show() 
     
+    def update_emp(self):
+        import emp_overtime_update as update_emp_window
+
+        self.emp_update_window = update_emp_window.MainWindow()
+        self.emp_dpdate_window.show() 
+
     def input_emp(self):
         import emp_overtime_input as input_emp_window
 
