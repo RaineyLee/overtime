@@ -44,9 +44,9 @@ class WindowClass(QMainWindow, main_window) :
         select_emp.setStatusTip("사원별 조회")
         select_emp.triggered.connect(self.select_emp)
 
-        input_emp = QAction('잔업시간 수정', self)
-        input_emp.setStatusTip("잔업시간 수정")
-        input_emp.triggered.connect(self.update_emp)
+        update_emp = QAction('잔업시간 수정', self)
+        update_emp.setStatusTip("잔업시간 수정")
+        update_emp.triggered.connect(self.update_emp)
         
         input_emp = QAction('잔업시간 입력', self)
         input_emp.setStatusTip("잔업시간 입력")
@@ -64,7 +64,7 @@ class WindowClass(QMainWindow, main_window) :
         overtime_info.addAction(select_dept)
         overtime_info.addAction(select_emp)
 
-        overtime_update.addAction(update_emp)
+        overtime_upload.addAction(update_emp)
         overtime_upload.addAction(input_emp)
         overtime_upload.addAction(upload_overtime)
 

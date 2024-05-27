@@ -18,7 +18,7 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-emp_overtime_input_window= uic.loadUiType(resource_path("./ui/emp_overtime_input.ui"))[0] # Window 사용시 ui 주소
+emp_overtime_input_window= uic.loadUiType(resource_path("./ui/emp_overtime_update.ui"))[0] # Window 사용시 ui 주소
 dept_window = uic.loadUiType(resource_path("./ui/dept_window.ui"))[0]
 emp_window = uic.loadUiType(resource_path("./ui/emp_window.ui"))[0]
 
