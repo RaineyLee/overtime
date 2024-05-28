@@ -440,3 +440,45 @@ class Select:
     #         return error
 
     #     return ("완료", "바코드 정보가 정상적으로 업로드 되었습니다.")
+
+    def update_overtime(self, arr_1):
+        cursor = self.conn.cursor()
+
+        try:
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+
+            query = """
+                    SELECT t.id, t.dept_id, t.dept_name, t.emp_id, t.emp_name, t.overtime_date, t.overtime, t.start, t.end, t.detail, t.note
+                    FROM(
+                    SELECT a.id AS "id", b.dept_id AS "dept_id", b.dept_name AS "dept_name", c.emp_id AS "emp_id", c.emp_name AS "emp_name", 
+                    a.overtime_date AS "overtime_date", round(a.overtime,2) AS "overtime", a.s_time AS "start", a.t_time AS "end", a.detail AS "detail", a.note AS "note"
+                    FROM overtime a, department b, employee c   
+                    WHERE a.emp_id = c.emp_id
+                    AND a.dept_id = b.dept_id
+                    AND a.overtime_date BETWEEN %s AND %s 
+                    ORDER BY  b.dept_id, c.emp_id, a.overtime_date) t
+                    WHERE t.dept_id LIKE %s
+                    AND t.emp_id LIKE %s
+                    ;                   
+                    """ 
+                    # 월로 비교 하기 AND DATE_FORMAT(a.overtime_date, "%%Y-%%m") BETWEEN %s AND %s
+                                #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            result = cursor.fetchall()
+
+            if result:
+                self.conn.close()
+                self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
+                return result
+            else:
+                self.conn.close()
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
+
+        except Exception as e:
+            self.msg_box("Error", str(e))
