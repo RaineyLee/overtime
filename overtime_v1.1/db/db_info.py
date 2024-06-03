@@ -1,6 +1,6 @@
 class Connect:
 
-    # # test server 개인용
+    # # test server
     # host = "125.143.154.68"
     # port = 3307
     # database = "webserver"

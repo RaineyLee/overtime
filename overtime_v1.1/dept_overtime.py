@@ -275,6 +275,7 @@ class DeptWindow(QDialog, dept_window):
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
         self.btn_confirm.clicked.connect(self.accept) # Close the dialog when OK is clicked 
+        self.tbl_info.cellDoubleClicked.connect(self.accept)
 
     def make_table(self):
         from db.db_select import Select
@@ -340,6 +341,7 @@ class EmpWindow(QDialog, emp_window):
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
         self.btn_confirm.clicked.connect(self.accept) # Close the dialog when OK is clicked 
+        self.tbl_info.cellDoubleClicked.connect(self.accept)
 
     def make_table(self):
         from db.db_select import Select

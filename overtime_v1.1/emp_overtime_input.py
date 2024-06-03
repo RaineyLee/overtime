@@ -72,8 +72,8 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         detail = self.txt_detail.toPlainText()
         note = self.txt_note.toPlainText()
 
-        list = [dept_id, dept_name, emp_id, emp_name, overtime_date, str(overtime), from_time, to_time, detail, note]
-        title = ["부서ID", "부서명", "사번", "사원명", "잔업일자", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
+        list = [dept_id, dept_name, emp_id, emp_name, overtime_date, from_time, to_time, str(overtime), detail, note]
+        title = ["부서ID", "부서명", "사번", "사원명", "잔업일자", "시작시간", "종료시간", "잔업시간", "작업내용", "비고"]
         
         # 필수 입력값 
         list_must = [dept_id, dept_name, emp_id, emp_name, overtime_date, str(overtime)]
@@ -195,6 +195,7 @@ class DeptWindow(QDialog, dept_window):
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
         self.btn_confirm.clicked.connect(self.accept) # Close the dialog when OK is clicked 
+        self.tbl_info.cellDoubleClicked.connect(self.accept)
 
     def make_table(self):
         from db.db_select import Select
@@ -259,6 +260,7 @@ class EmpWindow(QDialog, emp_window):
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
         self.btn_confirm.clicked.connect(self.accept) # Close the dialog when OK is clicked 
+        self.tbl_info.cellDoubleClicked.connect(self.accept)
 
     def make_table(self):
         from db.db_select import Select

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1077</width>
+    <width>1080</width>
     <height>810</height>
    </rect>
   </property>
@@ -26,9 +26,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>210</y>
+     <y>170</y>
      <width>1041</width>
-     <height>561</height>
+     <height>601</height>
     </rect>
    </property>
    <property name="sizeAdjustPolicy">
@@ -427,60 +427,6 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="btn_update">
-   <property name="geometry">
-    <rect>
-     <x>904</x>
-     <y>170</y>
-     <width>75</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>16777215</width>
-     <height>30</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>수정</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_delete">
-   <property name="geometry">
-    <rect>
-     <x>984</x>
-     <y>170</y>
-     <width>75</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>16777215</width>
-     <height>30</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>8</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>삭제</string>
-   </property>
-  </widget>
   <widget class="Line" name="line">
    <property name="geometry">
     <rect>
@@ -498,7 +444,7 @@ p, li { white-space: pre-wrap; }
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>120</y>
+     <y>115</y>
      <width>1041</width>
      <height>41</height>
     </rect>
@@ -516,119 +462,6 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string>시작/종료 시간</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="7">
-     <widget class="QTextEdit" name="txt_detail">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>맑은 고딕</family>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="lbl_select_file_10">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>잔업시간</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QTextEdit" name="txt_overtime">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>맑은 고딕</family>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <widget class="QTextEdit" name="txt_from_time">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>30</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>맑은 고딕</family>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="6">
-     <widget class="QLabel" name="lbl_select_file_8">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>작업내용</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="8">
-     <widget class="QLabel" name="lbl_select_file_9">
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>8</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>비고</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4">
-     <widget class="QLabel" name="label">
-      <property name="font">
-       <font>
-        <family>맑은 고딕</family>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>~</string>
       </property>
      </widget>
     </item>
@@ -657,8 +490,118 @@ p, li { white-space: pre-wrap; }
       <property name="midLineWidth">
        <number>0</number>
       </property>
+      <property name="tabChangesFocus">
+       <bool>true</bool>
+      </property>
       <property name="readOnly">
        <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="7">
+     <widget class="QTextEdit" name="txt_detail">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>맑은 고딕</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="tabChangesFocus">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QTextEdit" name="txt_overtime">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>맑은 고딕</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="tabChangesFocus">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="lbl_select_file_10">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>잔업시간</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6">
+     <widget class="QLabel" name="lbl_select_file_8">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>작업내용</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <family>맑은 고딕</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>~</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QTextEdit" name="txt_from_time">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>맑은 고딕</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="tabChangesFocus">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -677,6 +620,66 @@ p, li { white-space: pre-wrap; }
         <weight>50</weight>
         <bold>false</bold>
        </font>
+      </property>
+      <property name="tabChangesFocus">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="8">
+     <widget class="QLabel" name="lbl_select_file_9">
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>비고</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="10">
+     <widget class="QPushButton" name="btn_update">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>수정</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="11">
+     <widget class="QPushButton" name="btn_delete">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>삭제</string>
       </property>
      </widget>
     </item>
@@ -702,6 +705,27 @@ p, li { white-space: pre-wrap; }
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>date_from</tabstop>
+  <tabstop>date_to</tabstop>
+  <tabstop>txt_dept_id</tabstop>
+  <tabstop>txt_dept_name</tabstop>
+  <tabstop>btn_select_dept</tabstop>
+  <tabstop>txt_emp_id</tabstop>
+  <tabstop>txt_emp_name</tabstop>
+  <tabstop>btn_select_emp</tabstop>
+  <tabstop>btn_select</tabstop>
+  <tabstop>txt_overtime</tabstop>
+  <tabstop>txt_from_time</tabstop>
+  <tabstop>txt_to_time</tabstop>
+  <tabstop>txt_detail</tabstop>
+  <tabstop>txt_note</tabstop>
+  <tabstop>btn_update</tabstop>
+  <tabstop>btn_delete</tabstop>
+  <tabstop>tbl_info</tabstop>
+  <tabstop>btn_close</tabstop>
+  <tabstop>txt_id</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

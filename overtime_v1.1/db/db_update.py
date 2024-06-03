@@ -4,7 +4,8 @@ import db.db_info as conn_info
 import pymysql
 from PyQt5.QtWidgets import QMessageBox
 
-class Delete:
+class Update:
+
     def __init__(self):
         db_info = conn_info.Connect()
 
@@ -16,7 +17,7 @@ class Delete:
 
         self.conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port, use_unicode=True, charset='utf8')        
 
-    def delete_emp_overtime(self, arg_1):
+    def update_emp_overtime(self, arr):
         cursor = self.conn.cursor()
 
         try:
@@ -27,12 +28,12 @@ class Delete:
             # 위와 같이 작성하면 오류가 발생하는 것이다.            
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
-            query = """DELETE FROM overtime WHERE id = %s;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
-            cursor.execute(query, arg_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
+            query = """UPDATE overtime SET overtime = %s, s_time = %s, t_time = %s, detail = %s, note = %s WHERE id = %s;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query, arr) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             self.conn.commit()
             self.conn.close()
 
-            self.msg_box("삭제결과", "정상적으로 삭제 되었습니다.")            
+            self.msg_box("수정결과", "정상적으로 수정 되었습니다.")            
 
         except Exception as e:
             self.conn.close()

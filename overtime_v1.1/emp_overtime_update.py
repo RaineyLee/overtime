@@ -43,6 +43,7 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.btn_select_emp.clicked.connect(self.popup_emp_info)
         self.btn_select.clicked.connect(self.search_overtime_info)
         self.btn_delete.clicked.connect(self.delete_overtime_info)
+        self.btn_update.clicked.connect(self.update_overtime_info)
         self.tbl_info.cellClicked.connect(self.select_info)
         # self.btn_save.clicked.connect(self.upload)
         # self.btn_input.clicked.connect(self.input_data)
@@ -163,6 +164,103 @@ class MainWindow(QWidget, emp_overtime_update_window) :
             delete = Delete()
             delete.delete_emp_overtime(id)
             self.tbl_info.setRowCount(0)
+
+    def update_overtime_info(self):
+        now = QDate.currentDate()
+        date_from = self.date_from.date()
+        days = date_from.daysTo(now)
+
+        if days > 30:
+            self.msg_box("수정오류", "수정 가능 기간이 지났습니다.")
+            return
+        else:
+            id = self.txt_id.toPlainText()
+            dept_name = self.txt_dept_name.toPlainText()
+            emp_name = self.txt_emp_name.toPlainText()
+
+            overtime = self.txt_overtime.toPlainText()
+            from_time = self.txt_from_time.toPlainText()
+            to_time = self.txt_to_time.toPlainText()
+            detail = self.txt_detail.toPlainText()
+            note = self.txt_note.toPlainText()
+
+            update_list = [overtime, from_time, to_time, detail, note, id]
+
+            option = QtWidgets.QMessageBox.question(self, "QMessageBox", f"{dept_name} {emp_name} 사원의 잔업정보를 수정 하시겠습니까?", 
+                                        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Yes)
+            
+            if option == QtWidgets.QMessageBox.Cancel:
+                return
+            elif option == QtWidgets.QMessageBox.No:
+                return
+            elif option == QtWidgets.QMessageBox.Yes: 
+
+                from db.db_update import Update
+                update = Update()
+                update.update_emp_overtime(update_list)
+                self.tbl_info.setRowCount(0)
+
+                self.date_from.setDate(QDate.currentDate())
+                self.date_to.setDate(QDate.currentDate())
+
+                self.txt_dept_id.setText("")
+                self.txt_dept_name.setText("")
+                self.txt_emp_id.setText("")
+                self.txt_emp_name.setText("")
+                self.txt_overtime.setText("")
+                self.txt_from_time.setText("")
+                self.txt_to_time.setText("")
+                self.txt_detail.setText("")
+                self.txt_note.setText("")
+
+                from db.db_select import Select
+                select = Select()
+                result = select.update_overtime_id(id)
+
+                title = ["ID", "부서아이디", "부서명", "사번", "이름", "날짜", "잔업시간", "시작시간", "종료시간", "작업내용", "비고"]
+                self.make_table(len(result), result, title)
+
+    def delete_overtime_info(self):
+        now = QDate.currentDate()
+        date_from = self.date_from.date()
+        days = date_from.daysTo(now)
+
+        if days > 30:
+            self.msg_box("삭제오류", "삭제 가능 기간이 지났습니다.")
+            return
+        else:
+            id = self.txt_id.toPlainText()
+            dept_name = self.txt_dept_name.toPlainText()
+            emp_name = self.txt_emp_name.toPlainText()
+
+            option = QtWidgets.QMessageBox.question(self, "QMessageBox", f"{dept_name} {emp_name} 사원의 잔업정보를 삭제 하시겠습니까?", 
+                                        QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Yes)
+            
+            if option == QtWidgets.QMessageBox.Cancel:
+                return
+            elif option == QtWidgets.QMessageBox.No:
+                return
+            elif option == QtWidgets.QMessageBox.Yes: 
+
+                from db.db_delete import Delete
+                delete = Delete()
+                delete.delete_emp_overtime(id)
+                self.tbl_info.setRowCount(0)               
+                
+                self.search_overtime_info()
+
+                self.date_from.setDate(QDate.currentDate())
+                self.date_to.setDate(QDate.currentDate())
+
+                self.txt_dept_id.setText("")
+                self.txt_dept_name.setText("")
+                self.txt_emp_id.setText("")
+                self.txt_emp_name.setText("")
+                self.txt_overtime.setText("")
+                self.txt_from_time.setText("")
+                self.txt_to_time.setText("")
+                self.txt_detail.setText("")
+                self.txt_note.setText("")
 
     def input_data(self):
 
@@ -302,6 +400,7 @@ class DeptWindow(QDialog, dept_window):
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
         self.btn_confirm.clicked.connect(self.accept) # Close the dialog when OK is clicked 
+        self.tbl_info.cellDoubleClicked.connect(self.accept)
 
     def make_table(self):
         from db.db_select import Select
@@ -366,6 +465,7 @@ class EmpWindow(QDialog, emp_window):
     def slots(self):
         ### 다이알로그 시그널 생성기 반드시!!!!!!!! 필요. 없으면 작동 안 함############
         self.btn_confirm.clicked.connect(self.accept) # Close the dialog when OK is clicked 
+        self.tbl_info.cellDoubleClicked.connect(self.accept)
 
     def make_table(self):
         from db.db_select import Select
