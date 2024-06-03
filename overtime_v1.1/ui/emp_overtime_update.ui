@@ -34,6 +34,9 @@
    <property name="sizeAdjustPolicy">
     <enum>QAbstractScrollArea::AdjustToContents</enum>
    </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::SelectedClicked</set>
+   </property>
    <property name="dragEnabled">
     <bool>true</bool>
    </property>

@@ -33,6 +33,7 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.slots()
         self.date_from.setDate(QDate.currentDate())
         self.date_to.setDate(QDate.currentDate())
+
         # self.date = self.date_edit.date().toString("yyyyMMdd")
         self.setFixedSize(QSize(1079,823))
 
@@ -40,11 +41,13 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         # self.btn_search.clicked.connect(self.make_data)
         self.btn_close.clicked.connect(self.window_close)
         self.btn_select_dept.clicked.connect(self.popup_dept_info)
+        self.btn_select_dept.clicked.connect(self.clear_txt)
         self.btn_select_emp.clicked.connect(self.popup_emp_info)
         self.btn_select.clicked.connect(self.search_overtime_info)
         self.btn_delete.clicked.connect(self.delete_overtime_info)
         self.btn_update.clicked.connect(self.update_overtime_info)
-        self.tbl_info.cellClicked.connect(self.select_info)
+        self.tbl_info.cellClicked.connect(self.select_info)       
+        # self.txt_dept_id.textChanged().connect(self.clear_txt)
         # self.btn_save.clicked.connect(self.upload)
         # self.btn_input.clicked.connect(self.input_data)
         # self.btn_clear.clicked.connect(self.clear)
@@ -52,6 +55,14 @@ class MainWindow(QWidget, emp_overtime_update_window) :
     # def set_date(self):
     #     date = self.date_select.date()
     #     self.txt_date.setText(date.toString("yyyy-MM"))
+    def clear_txt(self):
+        self.txt_emp_id.setText("")
+        self.txt_emp_name.setText("")
+        self.txt_overtime.setText("")
+        self.txt_from_time.setText("")
+        self.txt_to_time.setText("")
+        self.txt_detail.setText("")
+        self.txt_note.setText("")
 
     def clear(self):        
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
