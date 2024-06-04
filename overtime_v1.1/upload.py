@@ -128,6 +128,14 @@ class MainWindow(QWidget, main_window) :
                 list_1.append(data.text())
             list.append(list_1)
         
+        # 업로드 할 잔업시간 값이 float 형식이 아니면 중지
+        for i in list:
+            try:
+                float(i[7])
+            except:
+                self.msg_box("입력오류", "잔업시간 값이 숫자가 아닙니다.")
+                return
+        
         arr_1 = []
         for i in list:
             arr_11 = (i[0], i[1], i[2], i[3])

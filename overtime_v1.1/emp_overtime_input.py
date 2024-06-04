@@ -85,6 +85,13 @@ class MainWindow(QWidget, emp_overtime_input_window) :
                 self.msg_box("입력오류", f"{title_must[i-1]} 값이 누락 됐습니다.")
                 return
 
+        # 잔업시간이 숫자(float)가 아닌경우 처리 중단
+        try:
+            float(overtime)
+        except:
+            self.msg_box("입력오류", "잔업시간 값이 숫자가 아닙니다.")
+            return
+
         row_count = self.tbl_info.rowCount()
         col_count = len(title)
         
