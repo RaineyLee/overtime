@@ -4,8 +4,8 @@ import sys
 # import time
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QSize, QDate
-from PyQt5 import uic, QtCore
+from PyQt5.QtCore import Qt, QSize, QDate, QTime
+from PyQt5 import uic
 
 # 절대경로를 상대경로로 변경 하는 함수
 def resource_path(relative_path):
@@ -33,8 +33,8 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         self.slots()
         self.date.setDate(QDate.currentDate())
         # self.date = self.date_edit.date().toString("yyyyMMdd")
-        self.time_start.setTime(QtCore.QTime(18, 00)) 
-        self.time_end.setTime(QtCore.QTime(18, 00)) 
+        self.time_start.setTime(QTime(18, 00)) 
+        self.time_end.setTime(QTime(18, 00)) 
         self.setFixedSize(QSize(1079,823))
 
     def slots(self):
@@ -47,6 +47,7 @@ class MainWindow(QWidget, emp_overtime_input_window) :
         self.btn_save.clicked.connect(self.upload)
         self.time_start.timeChanged.connect(self.calculate_overtime)
         self.time_end.timeChanged.connect(self.calculate_overtime)
+        self.txt_dept_name.textChanged.connect(self.clear_empinfo)
         # self.btn_clear.clicked.connect(self.clear)
 
     # def set_date(self):
@@ -58,6 +59,10 @@ class MainWindow(QWidget, emp_overtime_input_window) :
 
         self.txt_dept_id.setText("")
         self.txt_dept_name.setText("")
+        self.txt_emp_id.setText("")
+        self.txt_emp_name.setText("")
+
+    def clear_empinfo(self):
         self.txt_emp_id.setText("")
         self.txt_emp_name.setText("")
 
@@ -107,15 +112,15 @@ class MainWindow(QWidget, emp_overtime_input_window) :
             self.tbl_info.setItem(row_count, i, QTableWidgetItem(str(list[i])))
             self.tbl_info.item(row_count, i).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
-            self.txt_dept_id.setText("")
-            self.txt_dept_name.setText("")
-            self.txt_emp_id.setText("")
-            self.txt_emp_name.setText("")
-            self.txt_overtime.setText("")
+            # self.txt_dept_id.setText("")
+            # self.txt_dept_name.setText("")
+            # self.txt_emp_id.setText("")
+            # self.txt_emp_name.setText("")
+            # self.txt_overtime.setText("")
             # self.txt_from_time.setText("")
             # self.txt_to_time.setText("")
-            self.txt_detail.setText("")
-            self.txt_note.setText("")
+            # self.txt_detail.setText("")
+            # self.txt_note.setText("")
     
     # 입력한 시작/종료 시간으로 잔업시간 계산
     def calculate_overtime(self):
@@ -169,6 +174,16 @@ class MainWindow(QWidget, emp_overtime_input_window) :
 
         self.msg_box(result[0], result[1])
         self.tbl_info.setRowCount(0)
+
+        self.txt_dept_id.setText("")
+        self.txt_dept_name.setText("")
+        self.txt_emp_id.setText("")
+        self.txt_emp_name.setText("")
+        self.txt_detail.setText("")
+        self.txt_note.setText("")
+
+        self.time_start.setTime(QTime(18, 00)) 
+        self.time_end.setTime(QTime(18, 00)) 
 
     # 부서명 가져오기 팝업
     def popup_dept_info(self):

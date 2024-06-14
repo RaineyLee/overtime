@@ -4,8 +4,8 @@ import sys
 # import time
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QSize, QDate
-from PyQt5 import uic, QtWidgets
+from PyQt5.QtCore import Qt, QSize, QDate, QTime
+from PyQt5 import uic, QtWidgets, QtCore
 
 # 절대경로를 상대경로로 변경 하는 함수
 def resource_path(relative_path):
@@ -34,6 +34,9 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.date_from.setDate(QDate.currentDate())
         self.date_to.setDate(QDate.currentDate())
 
+        self.time_start.setTime(QtCore.QTime(18, 00)) 
+        self.time_end.setTime(QtCore.QTime(18, 00)) 
+
         # self.date = self.date_edit.date().toString("yyyyMMdd")
         self.setFixedSize(QSize(1079,823))
 
@@ -47,6 +50,8 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.btn_delete.clicked.connect(self.delete_overtime_info)
         self.btn_update.clicked.connect(self.update_overtime_info)
         self.tbl_info.cellClicked.connect(self.select_info)       
+        self.time_start.timeChanged.connect(self.calculate_overtime)
+        self.time_end.timeChanged.connect(self.calculate_overtime)
         # self.txt_dept_id.textChanged().connect(self.clear_txt)
         # self.btn_save.clicked.connect(self.upload)
         # self.btn_input.clicked.connect(self.input_data)
@@ -59,8 +64,8 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.txt_emp_id.setText("")
         self.txt_emp_name.setText("")
         self.txt_overtime.setText("")
-        self.txt_from_time.setText("")
-        self.txt_to_time.setText("")
+        self.time_start.setTime(QtCore.QTime(18, 00)) 
+        self.time_end.setTime(QtCore.QTime(18, 00)) 
         self.txt_detail.setText("")
         self.txt_note.setText("")
 
@@ -71,6 +76,19 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.txt_dept_name.setText("")
         self.txt_emp_id.setText("")
         self.txt_emp_name.setText("")
+
+    def calculate_overtime(self):
+        time_1 = self.time_start.time()
+        time_2 = self.time_end.time()
+
+        # 시간 차이 계산
+        secs = time_1.secsTo(time_2)
+        hours, remainder = divmod(abs(secs), 3600)
+        # minutes, seconds = divmod(remainder, 60)
+        result = hours + round((remainder/3600), 1)
+        self.txt_overtime.setText(str(result)) 
+        # 가운데 정렬       
+        self.txt_overtime.setAlignment(Qt.AlignCenter)
 
     def search_overtime_info(self):
         date_from = self.date_from.date().toString("yyyy-MM-dd")
@@ -145,6 +163,16 @@ class MainWindow(QWidget, emp_overtime_update_window) :
 
         self.date_from.setDate(d)
         self.date_to.setDate(d)
+
+        # 시간 자르기 편집
+        start = list[7]
+        end = list[8]
+
+        start_hh = int(start[0:2])
+        start_mm = int(start[3:5])
+        end_hh = int(end[0:2])
+        end_mm = int(end[3:5])
+
         
         self.txt_id.setText(list[0])
         self.txt_dept_id.setText(list[1])
@@ -152,29 +180,30 @@ class MainWindow(QWidget, emp_overtime_update_window) :
         self.txt_emp_id.setText(list[3])
         self.txt_emp_name.setText(list[4])
         self.txt_overtime.setText(list[6])
-        self.txt_from_time.setText(list[7])
-        self.txt_to_time.setText(list[8])
+        self.time_start.setTime(QTime(start_hh, start_mm))
+        self.time_end.setTime(QTime(end_hh, end_mm))
         self.txt_detail.setText(list[9])
         self.txt_note.setText(list[10])
 
-    def delete_overtime_info(self):
-        id = self.txt_id.toPlainText()
-        dept_name = self.txt_dept_name.toPlainText()
-        emp_name = self.txt_emp_name.toPlainText()
+    # def delete_overtime_info(self):
+    #     id = self.txt_id.toPlainText()
+    #     dept_name = self.txt_dept_name.toPlainText()
+    #     emp_name = self.txt_emp_name.toPlainText()
 
-        option = QtWidgets.QMessageBox.question(self, "QMessageBox", f"{dept_name} {emp_name} 사원의 잔업정보를 삭제 하시겠습니까?", 
-                                       QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Yes)
+    #     option = QtWidgets.QMessageBox.question(self, "QMessageBox", f"{dept_name} {emp_name} 사원의 잔업정보를 삭제 하시겠습니까?", 
+    #                                    QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel, QtWidgets.QMessageBox.Yes)
         
-        if option == QtWidgets.QMessageBox.Cancel:
-            return
-        elif option == QtWidgets.QMessageBox.No:
-            return
-        elif option == QtWidgets.QMessageBox.Yes: 
+    #     if option == QtWidgets.QMessageBox.Cancel:
+    #         return
+    #     elif option == QtWidgets.QMessageBox.No:
+    #         return
+    #     elif option == QtWidgets.QMessageBox.Yes: 
+            
+    #         from db.db_delete import Delete
+    #         delete = Delete()
+    #         delete.delete_emp_overtime(id)
 
-            from db.db_delete import Delete
-            delete = Delete()
-            delete.delete_emp_overtime(id)
-            self.tbl_info.setRowCount(0)
+    #         self.tbl_info.setRowCount(0)            
 
     def update_overtime_info(self):
         now = QDate.currentDate()
@@ -190,8 +219,8 @@ class MainWindow(QWidget, emp_overtime_update_window) :
             emp_name = self.txt_emp_name.toPlainText()
 
             overtime = self.txt_overtime.toPlainText()
-            from_time = self.txt_from_time.toPlainText()
-            to_time = self.txt_to_time.toPlainText()
+            from_time = self.time_start.time().toString("hh:mm")
+            to_time = self.time_end.time().toString("hh:mm")
             detail = self.txt_detail.toPlainText()
             note = self.txt_note.toPlainText()
 
@@ -218,9 +247,9 @@ class MainWindow(QWidget, emp_overtime_update_window) :
                 self.txt_dept_name.setText("")
                 self.txt_emp_id.setText("")
                 self.txt_emp_name.setText("")
-                self.txt_overtime.setText("")
-                self.txt_from_time.setText("")
-                self.txt_to_time.setText("")
+                # self.txt_overtime.setText("")
+                self.time_start.setTime(QTime(18, 00)) 
+                self.time_end.setTime(QTime(18, 00)) 
                 self.txt_detail.setText("")
                 self.txt_note.setText("")
 
@@ -258,7 +287,7 @@ class MainWindow(QWidget, emp_overtime_update_window) :
                 delete.delete_emp_overtime(id)
                 self.tbl_info.setRowCount(0)               
                 
-                self.search_overtime_info()
+                # self.search_overtime_info()
 
                 self.date_from.setDate(QDate.currentDate())
                 self.date_to.setDate(QDate.currentDate())
@@ -267,11 +296,12 @@ class MainWindow(QWidget, emp_overtime_update_window) :
                 self.txt_dept_name.setText("")
                 self.txt_emp_id.setText("")
                 self.txt_emp_name.setText("")
-                self.txt_overtime.setText("")
-                self.txt_from_time.setText("")
-                self.txt_to_time.setText("")
+                # self.txt_overtime.setText("")
                 self.txt_detail.setText("")
                 self.txt_note.setText("")
+
+                self.time_start.setTime(QTime(18, 00)) 
+                self.time_end.setTime(QTime(18, 00)) 
 
     def input_data(self):
 
