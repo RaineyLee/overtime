@@ -76,7 +76,7 @@ class Select:
             # 위와 같이 작성하면 오류가 발생하는 것이다.            
             # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
 
-            query = """SELECT dept_id, dept_name FROM department ORDER BY dept_id;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            query = """SELECT dept_id, dept_name FROM department WHERE yn = "y" ORDER BY dept_id;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
             cursor.execute(query) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
@@ -351,6 +351,7 @@ class Select:
                     FROM employee a, department b
                     WHERE a.dept_id = b.dept_id
                     AND a.yn = %s
+                    ORDER BY a.dept_id, a.emp_id
                     ;               
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
@@ -384,6 +385,7 @@ class Select:
                     SELECT a.dept_id, b.dept_name, a.emp_id, a.emp_name, a.yn
                     FROM employee a, department b
                     WHERE a.dept_id = b.dept_id AND b.dept_id = %s AND a.yn = %s
+                    ORDER BY a.dept_id, a.emp_id
                     ;               
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
@@ -417,6 +419,7 @@ class Select:
                     SELECT a.dept_id, b.dept_name, a.emp_id, a.emp_name, a.yn
                     FROM employee a, department b
                     WHERE a.dept_id = b.dept_id AND a.emp_id = %s AND a.yn = %s
+                    ORDER BY a.dept_id, a.emp_id
                     ;               
                     """ 
                                 #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
