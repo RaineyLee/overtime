@@ -99,6 +99,7 @@ class MainWindow(QWidget, emp_window) :
 
     def make_table(self, num, arr_1, title):   
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
+        self.tbl_info.setSortingEnabled(True)
 
         col = len(title)
 

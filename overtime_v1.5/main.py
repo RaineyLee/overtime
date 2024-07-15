@@ -6,6 +6,9 @@ from PyQt5 import uic, QtWidgets
 import openpyxl
 from openpyxl.styles import Alignment
 from datetime import datetime
+# 차트 생성용
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 # 절대경로를 상대경로로 변경 하는 함수
 def resource_path(relative_path):
@@ -16,6 +19,10 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+# matplotlib 폰트 설정
+plt.rcParams['font.family'] ='Malgun Gothic'
+plt.rcParams['axes.unicode_minus'] =False
+
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
 main_window= uic.loadUiType(resource_path("./ui/main_window.ui"))[0] # Window 사용시 ui 주소
@@ -25,7 +32,7 @@ class WindowClass(QMainWindow, main_window) :
     def __init__(self) :
         super().__init__()
 
-        self.version = 1.4
+        self.version = 1.5
 
         from db.db_select import Select
         select = Select()
@@ -34,49 +41,50 @@ class WindowClass(QMainWindow, main_window) :
         if self.version == result[0][0]:
             self.setupUi(self)
             self.setWindowTitle("DOOCH PUMP HR")
-            self.setFixedSize(QSize(1253,757))
+            self.setFixedSize(QSize(1337,839)) # 해상도에 따라 구성 비율이 변경되게 하고 싶지 않은 경우 창의 크기를 고정 시킨다.
+            self.check_login()
         else:
             self.msg_box("확인", "사용중인 프로그램의 버전 확인이 필요합니다.")
             return
         
-        self.lbl_dept.hide()
-        self.lbl_emp.hide()
-        self.tbl_dept_info.hide()
-        self.tbl_emp_info.hide()
-        self.btn_refresh.hide()
-        self.btn_download.hide()
-
-        
         self.slots()
-            
+
+        # 차트 그리기를 위한 레이아웃, 캔버스... 초기화 
+        # attribute를 찾을 수 없다는 에러 혹은 경고 메시지가 보일 때 
+        # init에서 선언 해야 한다.
+        self.canvas_bar = None
+        self.canvas_pie = None
+
+        self.layout_chart = QVBoxLayout()
 
     # def outgoing(self):
     #     print("new menu call")
     def slots(self):
-        self.btn_send.clicked.connect(self.check_login)
         self.btn_refresh.clicked.connect(self.refresh_report)
         self.btn_download.clicked.connect(self.make_file)
 
-    def check_login(self):        
-        id = self.version
-        password = self.lin_password.text()
+    def check_login(self): 
+        text, ok = QInputDialog.getText(self, 'Input Dialog', '사용자 번호 :')
+        if ok:
+            id = self.version
+            password = text
+        else:
+            self.setFixedSize(QSize(0,0))
+            return
 
         from db.db_select import Select
         select = Select()
         result = select.select_password(id)
 
         if password == result[0]:
-            self.lbl_pass.setText("")
-            self.lin_password.hide()
-            self.btn_send.hide()
             self.btn_refresh.show()
             self.btn_download.show()
 
             self.mainwindow()
         else:
-            self.lin_password.setText("")
-            self.lin_password.setAlignment(Qt.AlignCenter)
             self.msg_box("오류", "사용자 코드를 확인 하세요.")
+            self.setFixedSize(QSize(0,0))
+            return
 
 
     def mainwindow(self):
@@ -127,8 +135,74 @@ class WindowClass(QMainWindow, main_window) :
         self.setStatusBar(status_bar)
 
         self.monthly_dept_report()
-        self.monthly_emp_report()
+        self.monthly_sum_report()
 
+    def make_chart(self, column_name, result):
+        fig_bar = plt.Figure()
+        self.canvas_bar = FigureCanvas(fig_bar)
+        self.layout_bar.addWidget(self.canvas_bar)
+
+        year_month = column_name[1:13]
+        overtime = result[0][1:13]
+
+        self.ax_bar = fig_bar.add_subplot(111)
+        self.bars = self.ax_bar.bar(year_month, overtime)
+        self.ax_bar.set_title('월별 잔업시간')
+        self.canvas_bar.draw()
+
+        self.canvas_bar.mpl_connect('button_press_event', self.on_click)
+
+    def on_click(self, event):
+        if event.inaxes == self.ax_bar and self.bars is not None:
+            for bar in self.bars:
+                if bar.contains(event)[0]:
+                    # label = bar.get_x() + bar.get_width() / 2
+                    # value = bar.get_height()
+                    col = bar.get_x() + bar.get_width() / 2
+                    month = int(col) + 1
+                    
+                    result = self.on_click_table_info(col)
+                    label = result[0]
+                    value = result[1]
+
+                    self.show_pie_chart(label, value, month)
+                    break
+    
+    def on_click_table_info(self, arg):
+        row = self.tbl_dept_info.rowCount()
+        col = int(arg) + 1
+
+        list_value = [] 
+        for i in range(row):
+            value = self.tbl_dept_info.item(i,col)
+            list_value.append(value.text())
+        list_value = list(map(float, list_value))
+
+        list_dept = [] 
+        for i in range(row):
+            dept = self.tbl_dept_info.item(i,0)
+            list_dept.append(dept.text())
+
+        return list_dept, list_value
+
+    def show_pie_chart(self, label, value, col):
+        if self.canvas_pie:
+            self.layout_pie.removeWidget(self.canvas_pie)
+            self.canvas_pie.deleteLater()
+        
+        fig_pie = plt.Figure()
+        self.canvas_pie = FigureCanvas(fig_pie)
+        self.layout_pie.addWidget(self.canvas_pie)
+
+         # 파이 차트 생성
+        ax_pie = fig_pie.add_subplot(111)
+        # values = [value, float(100) - value]  # value와 나머지 비율 계산 (예: 100에서 value를 뺀 값)
+        # labels = [label, 'Others']     # 항목과 나머지 항목의 레이블 설정
+        ax_pie.pie(value, labels=label, autopct='%1.1f%%')  # 파이 차트 그리기
+        ax_pie.set_title(f'{col}월 부서별 잔업시간')  # 차트 제목 설정
+
+        self.canvas_pie.draw()  # 캔버스 갱신
+        
     def refresh_report(self):
         option = QtWidgets.QMessageBox.question(self, "QMessageBox", f"잔업 정보를 새로고침 하시겠습니까?", 
                                         QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, QtWidgets.QMessageBox.Yes)
@@ -139,7 +213,7 @@ class WindowClass(QMainWindow, main_window) :
             return
         elif option == QtWidgets.QMessageBox.Yes: 
             self.monthly_dept_report()
-            self.monthly_emp_report()
+            self.monthly_sum_report()
 
     def monthly_dept_report(self):
         self.lbl_dept.show()
@@ -150,16 +224,16 @@ class WindowClass(QMainWindow, main_window) :
         result, column_names = select.select_dept_monthly()
 
         self.make_dept_table(len(result), result, column_names)
-
-    def monthly_emp_report(self):
-        self.lbl_emp.show()
-        self.tbl_emp_info.show()
+       
+    def monthly_sum_report(self):
+        self.tbl_month_info.show()
         
         from db.db_select import Select
         select = Select()
-        result, column_names = select.select_emp_monthly()
+        result, column_names = select.select_monthly_sum()
 
-        self.make_emp_table(len(result), result, column_names)
+        self.make_sum_table(len(result), result, column_names)
+        self.make_chart(column_names, result)
 
     def make_dept_table(self, num, arr_1, column_names):   
         self.tbl_dept_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
@@ -187,38 +261,37 @@ class WindowClass(QMainWindow, main_window) :
         # 테이블의 길이에 맞추어 컬럼 길이를 균등하게 확장
         self.tbl_dept_info.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-    def make_emp_table(self, num, arr_1, column_names):   
-        self.tbl_emp_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
+    def make_sum_table(self, num, arr_1, column_names):   
+        self.tbl_month_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
 
         col = len(column_names)
 
-        self.tbl_emp_info.setRowCount(num)
-        self.tbl_emp_info.setColumnCount(col)
-        self.tbl_emp_info.setHorizontalHeaderLabels(column_names)
+        self.tbl_month_info.setRowCount(num)
+        self.tbl_month_info.setColumnCount(col)
+        # self.tbl_month_info.setHorizontalHeaderLabels(column_names) #헤더 숨기기를 위해 라벨을 설정하지 않음
 
         for i in range(num):
             for j in range(col): # 아니면 10개
-                self.tbl_emp_info.setItem(i, j, QTableWidgetItem(str(arr_1[i][j])))
-                self.tbl_emp_info.item(i, j).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)     
+                self.tbl_month_info.setItem(i, j, QTableWidgetItem(str(arr_1[i][j])))
+                self.tbl_month_info.item(i, j).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)     
 
         # 컨텐츠의 길이에 맞추어 컬럼의 길이를 자동으로 조절
         ################################################################
-        table = self.tbl_emp_info
+        table = self.tbl_month_info
         header = table.horizontalHeader()
+        header.hide() # 헤더 숨기기 함수
 
         for i in range(col):
             header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
         ################################################################
 
         # 테이블의 길이에 맞추어 컬럼 길이를 균등하게 확장
-        self.tbl_emp_info.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.tbl_month_info.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
      # 테이블에 남겨진 정보를 엑셀로 변환
     def make_file(self):
         rows_dept_table = self.tbl_dept_info.rowCount()
         cols_dept_table = self.tbl_dept_info.columnCount()
-        rows_emp_table = self.tbl_emp_info.rowCount()
-        cols_emp_table = self.tbl_emp_info.columnCount()
 
         list_dept_1 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
         for i in range(rows_dept_table):
@@ -228,29 +301,18 @@ class WindowClass(QMainWindow, main_window) :
                 list_dept_2.append(data_dept.text())
             list_dept_1.append(list_dept_2)
 
-        list_emp_1 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
-        for i in range(rows_emp_table):
-            list_emp_2 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
-            for j in range(cols_emp_table): 
-                data_emp = self.tbl_emp_info.item(i,j)
-                list_emp_2.append(data_emp.text())
-            list_emp_1.append(list_emp_2)
-
         num_dept = len(list_dept_1)
-        num_emp = len(list_emp_1)
 
-        self.make_excel(list_dept_1, list_emp_1, num_dept, num_emp)
+        self.make_excel(list_dept_1, num_dept)
 
     # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
-    def make_excel(self, list_dept_1, list_emp_1, num_dept, num_emp):
-        self.msg_box("자료저장", "부서잔업정보, 사원잔업정보 2개의 sheet가 생성 됩니다.")
+    def make_excel(self, list_dept_1, num_dept):
+        self.msg_box("자료저장", "부서 잔업정보가 생성 됩니다.")
 
         wb = openpyxl.Workbook()
         wb.create_sheet(index=0, title='부서잔업정보')
-        wb.create_sheet(index=1, title='사원잔업정보')
 
         dept_sheet = wb['부서잔업정보']
-        emp_sheet = wb['사원잔업정보']
 
         column_count = self.tbl_dept_info.columnCount()
         dept_headers = []
@@ -259,37 +321,18 @@ class WindowClass(QMainWindow, main_window) :
             if header_item:
                 dept_headers.append(header_item.text())
 
-        column_count = self.tbl_emp_info.columnCount()
-        emp_headers = []
-        for col in range(column_count):
-            header_item = self.tbl_emp_info.horizontalHeaderItem(col)
-            if header_item:
-                emp_headers.append(header_item.text())
-
         dept_sheet.append(dept_headers)
-        emp_sheet.append(emp_headers)
 
         for i in range(num_dept):
             for j in range(len(dept_headers)):
                 dept_sheet.cell(row=i+2, column=j+1, value=list_dept_1[i][j])
         
-        for i in range(num_emp):
-            for j in range(len(emp_headers)):
-                emp_sheet.cell(row=i+2, column=j+1, value=list_emp_1[i][j])
-
         ## 각 칼럼에 대해서 모든 셀값의 문자열 개수에서 1.1만큼 곱한 것들 중 최대값을 계산한다.
         for column_cells in dept_sheet.columns:
             # length = max(len(str(cell.value))*1.1 for cell in column_cells)
             dept_sheet.column_dimensions[column_cells[0].column_letter].width = 20
             ## 셀 가운데 정렬
             for cell in dept_sheet[column_cells[0].column_letter]:
-                cell.alignment = Alignment(horizontal='center')
-        
-        for column_cells in emp_sheet.columns:
-            # length = max(len(str(cell.value))*1.1 for cell in column_cells)
-            emp_sheet.column_dimensions[column_cells[0].column_letter].width = 20
-            ## 셀 가운데 정렬
-            for cell in emp_sheet[column_cells[0].column_letter]:
                 cell.alignment = Alignment(horizontal='center')
         
         fname = self.file_save()
