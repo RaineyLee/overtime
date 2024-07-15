@@ -49,16 +49,20 @@ class WindowClass(QMainWindow, main_window) :
         
         self.slots()
 
-        # 차트 그리기를 위한 레이아웃, 캔버스... 초기화 
-        # attribute를 찾을 수 없다는 에러 혹은 경고 메시지가 보일 때 
-        # init에서 선언 해야 한다.
-        self.canvas_bar = None
-        self.canvas_pie = None
+        #  # Initialize chart layout
+        # self.chart_widget = QWidget(self)
+        # self.layout_chart = QVBoxLayout(self.chart_widget)
+        # self.setCentralWidget(self.chart_widget)
 
-        self.layout_chart = QVBoxLayout()
+        #  차트 그리기를 위한 레이아웃, 캔버스... 초기화 
+        #  attribute를 찾을 수 없다는 에러 혹은 경고 메시지가 보일 때 
+        #  init에서 선언 해야 한다.
+        # self.canvas_bar = None
+        # self.canvas_pie = None
 
-    # def outgoing(self):
-    #     print("new menu call")
+        # self.layout_chart = QVBoxLayout()
+        # self.layout
+
     def slots(self):
         self.btn_refresh.clicked.connect(self.refresh_report)
         self.btn_download.clicked.connect(self.make_file)
@@ -134,20 +138,38 @@ class WindowClass(QMainWindow, main_window) :
         status_bar = self.statusBar()
         self.setStatusBar(status_bar)
 
+        # # 차트 그리기를 위한 레이아웃, 캔버스... 초기화 
+        # # attribute를 찾을 수 없다는 에러 혹은 경고 메시지가 보일 때 
+        # # init에서 선언 하던지 자동으로 선언이 가능하게 해야 한다.
+        self.canvas_bar = None
+        self.canvas_pie = None
+
         self.monthly_dept_report()
         self.monthly_sum_report()
 
     def make_chart(self, column_name, result):
+        # Check and remove existing canvas if it exists
+        if self.canvas_bar:
+            self.layout_bar.removeWidget(self.canvas_bar)
+            self.canvas_bar.deleteLater()
+
+        # Create a new figure and canvas
         fig_bar = plt.Figure()
         self.canvas_bar = FigureCanvas(fig_bar)
         self.layout_bar.addWidget(self.canvas_bar)
 
-        year_month = column_name[1:13]
-        overtime = result[0][1:13]
+        # Extracting data
+        year_month = column_name[1:13]  # Assuming column_name includes a '날짜' column
+        overtime = result[0][1:13]      # Assuming result is a list of lists with the overtime data
 
+        # Plotting the data
         self.ax_bar = fig_bar.add_subplot(111)
         self.bars = self.ax_bar.bar(year_month, overtime)
         self.ax_bar.set_title('월별 잔업시간')
+        self.ax_bar.set_xlabel('월')
+        self.ax_bar.set_ylabel('잔업시간')
+
+        # Redraw the canvas
         self.canvas_bar.draw()
 
         self.canvas_bar.mpl_connect('button_press_event', self.on_click)
