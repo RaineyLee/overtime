@@ -13,22 +13,11 @@ try:
         "PyQt5.QtWidgets"
     ]
 
-    # executables = (
-    #     [
-    #         Executable(
-    #             "main.py",
-    #             copyright="Copyright (C) 2023 cx_Freeze",
-    #             # base=base,
-    #             icon="wms.256x231.png",
-    #         ),
-    #     ],
-    # )
-
     # Output directory
     build_exe_options = {
         "packages": packages,
         "excludes": [],
-        "include_files": [(matplotlib.get_data_path(), "mpl-data"), ("./ui", "ui")],
+        "include_files": [(matplotlib.get_data_path(), "mpl-data"), ("./ui", "ui")], # 특정 폴더 추가가 필요시 경로명(상대경로 가능)과 사용할 폴더명 명시
         "build_exe": "C:/myproject/build"  # Specify the output directory
     }
 
